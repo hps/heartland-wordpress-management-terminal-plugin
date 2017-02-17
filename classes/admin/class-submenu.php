@@ -79,6 +79,7 @@ class Submenu
             $this->performHeartlandAction($_GET['a'], $_GET['t']);
         }
 
+        $defaultTZ = date_default_timezone_get();
         date_default_timezone_set("UTC");
         $service = new HpsCreditService($this->getHeartlandConfiguration());
         $dateFormat = 'Y-m-d\TH:i:s.00\Z';
@@ -92,7 +93,7 @@ class Submenu
         $items = $service->listTransactions($dateMinus10->format($dateFormat), $current->format($dateFormat));
         $filteredItems = $this->filterTransactions($items);
 
-        date_default_timezone_set('America/New_York');
+        date_default_timezone_set($defaultTZ);
 
         $this->writeTransactionTable($filteredItems);
     }
