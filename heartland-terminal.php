@@ -16,25 +16,32 @@
  */
 
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	 die;
+if (!defined('WPINC')) {
+    die;
 }
 
-// Include the dependencies needed to instantiate the plugin.
-foreach ( glob( plugin_dir_path( __FILE__ ) . 'admin/*.php' ) as $file ) {
-	include_once $file;
+class HeartlandTerminal
+{
+    public function __construct()
+    {
+        // Include the dependencies needed to instantiate the plugin.
+        foreach (glob(plugin_dir_path(__FILE__) . 'classes/**/*.php') as $file) {
+            include_once $file;
+        }
+
+        add_action('plugins_loaded', array($this, 'heartlandTerminalLoad'));
+    }
+
+
+    /**
+    * Starts the plugin.
+    *
+    * @since 1.0.0
+    */
+    public function heartlandTerminalLoad()
+    {
+        $plugin = new Submenu(new Submenu_Page());
+        $plugin->init();
+    }
 }
-
-add_action( 'plugins_loaded', 'heartland_terminal_load' );
-
-/**
- * Starts the plugin.
- *
- * @since 1.0.0
- */
-function heartland_terminal_load() {
-
-	$plugin = new Submenu( new Submenu_Page() );
-	$plugin->init();
-
-}
+new HeartlandTerminal();
