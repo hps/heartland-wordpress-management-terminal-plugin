@@ -54,29 +54,140 @@ class Submenu
             'Heartland',
             'administrator',
             __FILE__,
-            array($this, 'adminHeartlandRootElement'),
-            plugins_url('/heartland.jpg', __FILE__)
+            array($this, 'adminHeartlandRoot'),
+            plugins_url('/assets/images/heartland-icon.jpg', __FILE__)
         );
 
         add_submenu_page(
             __FILE__,
-            'Heartland List Transactions',
+            'Heartland Transactions',
             'List Transactions',
             'administrator',
-            'heartland-list-transactions',
-            array($this, 'adminHeartlandListTransactions')
+            'heartland-transactions',
+            array($this, 'adminHeartlandTransactions')
+        );
+
+        add_submenu_page(
+            __FILE__,
+            'Heartland Options',
+            'Options',
+            'administrator',
+            'heartland-options',
+            array($this, 'adminHeartlandOptions')
         );
     }
 
-    public function adminHeartlandRootElement()
+    public function adminHeartlandRoot()
     {
-        echo "test";
+        $title = 'Heartland Payment Systems';
+        include_once plugin_dir_path(__FILE__)
+            . '../../templates/admin/root.php';
     }
 
-    public function adminHeartlandListTransactions()
+    public function adminHeartlandOptions()
     {
-        if (isset($_GET['a']) && isset($_GET['t'])) {
-            $this->performHeartlandAction($_GET['a'], $_GET['t']);
+        $title = 'Heartland Payment Systems - Options';
+        include_once plugin_dir_path(__FILE__)
+            . '../../templates/admin/options.php';
+    }
+
+    public function adminHeartlandTransactions()
+    {
+        $action = isset($_GET['action']) ? $_GET['action'] : '';
+        $id = isset($_GET['transaction']) ? $_GET['transaction'] : '';
+        $command = isset($_POST['command']) ? $_POST['command'] : '';
+
+        if (!empty($action) && !empty($id) && !empty($command)) {
+            try {
+                $this->processActionCommand($id, $action, $command);
+                $this->addNotice('Transaction update succeeded.', 'notice-success');
+            } catch (HpsException $e) {
+                $this->addNotice(
+                    sprintf('Transaction update failed. %s', $e->getMessage()),
+                    'notice-error'
+                );
+            }
+        }
+
+        if ($action === 'manage') {
+            if (empty($id)) {
+                wp_redirect(get_admin_url(null, 'admin.php?page=heartland-transactions'));
+                wp_die();
+                return;
+            }
+
+            $this->performManageAction($id);
+            return;
+        }
+
+        $this->writeTransactionTable($this->getReport());
+    }
+
+    protected function addNotice($message, $classes)
+    {
+        add_action('admin_notices', function () use ($message, $classes) {
+            include_once plugin_dir_path(__FILE__)
+                . '../../templates/admin/notice.php';
+        });
+    }
+
+    protected function processActionCommand($id, $action, $command)
+    {
+        $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
+
+        if ($action === 'manage' && $command === 'void-transaction') {
+            return $service->void()
+                ->withTransactionId($id)
+                ->execute();
+        }
+
+        if ($action === 'manage' && $command === 'refund-transaction') {
+            $transaction = $service->get($id)->execute();
+            $amount = !empty($transaction->settlementAmount)
+                ? $transaction->settlementAmount
+                : $transaction->authorizedAmount;
+            $authAmount = isset($_POST['refund_amount']) && !empty($_POST['refund_amount'])
+                ? $_POST['refund_amount']
+                : false;
+
+            $builder = $service->refund();
+
+            if ($transaction->transactionStatus === 'A') {
+                $builder = $service->reverse();
+            }
+
+            $builder = $builder
+                ->withTransactionId($id)
+                ->withCurrency('usd');
+
+            if ($builder instanceof HpsCreditServiceRefundBuilder) {
+                $builder = $builder->withAmount(
+                    $authAmount !== false ? $authAmount : $amount
+                );
+            } elseif ($builder instanceof HpsCreditServiceReverseBuilder) {
+                $builder = $builder
+                    ->withAmount($transaction->authorizedAmount)
+                    ->withAuthAmount(
+                        $authAmount !== false ? ($amount - $authAmount) : null
+                    );
+            }
+
+            return $builder->execute();
+        }
+    }
+
+    protected function dataOrDash($data, $empty = null)
+    {
+        return empty($data) || $data === $empty
+            ? '&mdash;' : $data;
+    }
+
+    protected function getReport()
+    {
+        $items = get_transient('heartland-transactions');
+
+        if (false !== $items) {
+            return json_decode($items);
         }
 
         $defaultTZ = date_default_timezone_get();
@@ -84,48 +195,121 @@ class Submenu
         $service = new HpsCreditService($this->getHeartlandConfiguration());
         $dateFormat = 'Y-m-d\TH:i:s.00\Z';
         $dateMinus10 = new DateTime();
-        $dateMinus10->sub(new DateInterval('P1D'));
+        $dateMinus10->sub(new DateInterval('P10D'));
         $current = new DateTime();
-
-        $filteredItems = null;
-        $items = null;
 
         $items = $service->listTransactions($dateMinus10->format($dateFormat), $current->format($dateFormat));
         $filteredItems = $this->filterTransactions($items);
 
-        date_default_timezone_set($defaultTZ);
+        if (!defined('HOUR_IN_SECONDS')) {
+            define('HOUR_IN_SECONDS', 60 * 60);
+        }
+        ini_set('error_log', dirname(__FILE__) . '/error_log');
+        set_transient('heartland-transactions', json_encode($filteredItems), HOUR_IN_SECONDS / 2);
 
-        $this->writeTransactionTable($filteredItems);
+        date_default_timezone_set($defaultTZ);
+        return $filteredItems;
     }
 
     protected function filterTransactions($items)
     {
-        return array_reverse($items);
+        return array_reverse(
+            array_map(
+                array($this, 'listTransactionsConvertExceptions'),
+                array_filter($items, array($this, 'listTransactionsStripUndesiredTypes'))
+            )
+        );
     }
 
-    protected function performHeartlandAction($action_type, $transaction_id)
+    protected function listTransactionsStripUndesiredTypes($item)
     {
-        if ($action_type === 'refund') {
-            if (!isset($_GET['amount'])) {
-                return;
-            }
+        return
+            substr($item->serviceName, 0, strlen('Report')) !== 'Report'
+            && !in_array($item->serviceName, array('GetAttachments'));
+    }
 
-            $amount = $_GET['amount'];
-            $this->performRefundAction($transaction_id, $amount);
+    protected function listTransactionsConvertExceptions($item)
+    {
+        if (empty($item->exceptions)) {
+            return $item;
         }
 
-        return;
+        if (!empty($item->exceptions->hpsException)) {
+            $item->exceptions->hpsException = (object)array(
+                'code' => $item->exceptions->hpsException->getCode(),
+                'message' => $item->exceptions->hpsException->getMessage(),
+                'details' => $item->exceptions->hpsException->details,
+            );
+        }
+
+        if (!empty($item->exceptions->cardException)) {
+            $item->exceptions->cardException = (object)array(
+                'code' => $item->exceptions->cardException->getCode(),
+                'message' => $item->exceptions->cardException->getMessage(),
+                'details' => $item->exceptions->cardException->details,
+            );
+        }
+
+        return $item;
     }
 
-    protected function performRefundAction($transaction_id, $amount)
+    protected function performManageAction($transactionId)
+    {
+        $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
+        $title = 'Heartland Payment Systems - Manage Transaction';
+        $transaction = null;
+
+        try {
+            $transaction = $service->get($transactionId)->execute();
+        } catch (HpsException $e) {
+            $transaction = false;
+        }
+
+        include_once plugin_dir_path(__FILE__)
+            . '../../templates/admin/manage-transaction.php';
+    }
+
+    protected function performRefundAction($transactionId, $amount)
     {
         $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
         return $service
             ->refund()
             ->withAmount($amount)
-            ->withTransactionId($transaction_id)
+            ->withTransactionId($transactionId)
             ->withCurrency('usd')
             ->execute();
+    }
+
+    protected function transactionStatusPretty($transaction)
+    {
+        $status = $transaction->transactionStatus;
+
+        switch ($status) {
+            case 'A':
+                $status = 'Active';
+                break;
+            case 'I':
+                $status = 'Inactive';
+                break;
+            case 'C':
+                $status = 'Cleared';
+                break;
+            case 'V':
+                $status = 'Voided';
+                break;
+            case 'X':
+                $status = 'Autovoided';
+                break;
+            case 'R':
+                $status = 'Reversed';
+                break;
+            case 'T':
+                $status = 'Timed-Out';
+                break;
+            default:
+                break;
+        }
+        return $this->dataOrDash($status);
     }
 
     protected function getHeartlandConfiguration()
@@ -140,6 +324,15 @@ class Submenu
 
     protected function writeTransactionTable($items)
     {
-        include_once plugin_dir_path(__FILE__) . '../../templates/admin/list-transactions.php';
+        $page = esc_url(get_admin_url(null, 'admin.php?page=heartland-transactions'));
+        $title = 'Heartland Payment Systems - Transactions';
+        $pagenum = isset($_GET['pagenum']) ? absint($_GET['pagenum']) : 1;
+        $limit = 10;
+        $offset = ($pagenum - 1) * $limit;
+        $total = count($items);
+        $numOfPages = ceil($total/$limit);
+        $items = array_slice($items, $offset, $limit);
+        include_once plugin_dir_path(__FILE__)
+            . '../../templates/admin/list-transactions.php';
     }
 }

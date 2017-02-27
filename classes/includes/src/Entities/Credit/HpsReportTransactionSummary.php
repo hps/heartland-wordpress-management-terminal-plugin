@@ -9,6 +9,7 @@ class HpsReportTransactionSummary extends HpsTransaction
     public $transactionType       = null;
     public $transactionUTCDate    = null;
     public $exceptions            = null;
+    public $serviceName           = null;
 
     public static function fromDict($rsp, $txnType, $filterBy = null, $returnType = 'HpsReportTransactionSummary')
     {
@@ -26,6 +27,7 @@ class HpsReportTransactionSummary extends HpsTransaction
         $serviceName = (isset($filterBy) ? HpsTransaction::transactionTypeToServiceName($filterBy) : null);
 
         foreach ($rsp->Transaction->ReportActivity->Details as $charge) {
+
             if (isset($serviceName) && $serviceName != (string)$charge->ServiceName) {
                 continue;
             }
@@ -47,17 +49,20 @@ class HpsReportTransactionSummary extends HpsTransaction
             $summary->settlementAmount = (isset($charge->SettlementAmt) ? (string)$charge->SettlementAmt : null);
             $summary->transactionType = (isset($charge->ServiceName) ? HpsTransaction::serviceNameToTransactionType((string)$charge->ServiceName) : null);
             $summary->transactionUTCDate = (isset($charge->TxnUtcDT) ? (string)$charge->TxnUtcDT : null);
+            $summary->serviceName = (string)$charge->ServiceName;
 
             $gwResponseCode = (isset($charge->GatewayRspCode) ? (string)$charge->GatewayRspCode : null);
             $issuerResponseCode  = (isset($charge->IssuerRspCode) ? (string)$charge->IssuerRspCode : null);
 
-            if ($gwResponseCode != "0" || $issuerResponseCode != "00") {
+            if (($gwResponseCode !== null && $gwResponseCode != "0")
+                || ($isserResponseCode !== null && $issuerResponseCode != "00")
+            ) {
                 $exceptions = new HpsChargeExceptions();
-                if ($gwResponseCode != "0") {
+                if ($gwResponseCode !== null && $gwResponseCode != "0") {
                     $message = (string)$charge->GatewayRspMsg;
                     $exceptions->hpsException = HpsGatewayResponseValidation::getException((string)$charge->GatewayTxnId, $gwResponseCode, $message);
                 }
-                if ($issuerResponseCode != "00") {
+                if ($isserResponseCode !== null && $issuerResponseCode != "00") {
                     $message = (string)$charge->IssuerRspText;
                     $exceptions->cardException = HpsIssuerResponseValidation::getException((string)$charge->GatewayTxnId, $issuerResponseCode, $message, 'credit');
                 }
