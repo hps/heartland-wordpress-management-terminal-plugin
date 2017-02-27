@@ -13,6 +13,8 @@
  * Author URI:        https://developer.heartlandpaymentsystems.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:       heartland-management-terminal
+ * Domain Path:       /languages
  */
 
 // If this file is called directly, abort.
@@ -42,6 +44,11 @@ class HeartlandTerminal
     {
         $plugin = new HeartlandTerminal_Submenu(new HeartlandTerminal_Submenu_Page());
         $plugin->init();
+        load_plugin_textdomain(
+            'heartland-management-terminal',
+            false,
+            basename(dirname(__FILE__)) . '/languages/'
+        );
     }
 }
 new HeartlandTerminal();

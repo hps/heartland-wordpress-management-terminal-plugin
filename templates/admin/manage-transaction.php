@@ -25,7 +25,7 @@ $ignoredProperties = array(
                     <div class="postarea">
                         <div class="notice notice-error">
                             <p>
-                                Error fetching transaction details for transaction
+                                <?php _e('Error fetching transaction details for transaction', 'heartland-management-terminal') ?>
                                 <code><?php echo $_GET['transaction'] ?></code>
                             </p>
                         </div>
@@ -64,23 +64,23 @@ $ignoredProperties = array(
                 <div id="postbox-container-1" class="postbox-container">
                     <div id="infodiv" class="postbox">
                         <h2 class="hndle">
-                            <span>Information</span>
+                            <span><?php _e('Information', 'heartland-management-terminal') ?></span>
                         </h2>
                         <div class="inside">
                             <div class="misc-pub-section">
-                                Transaction ID:
+                                <?php _e('Transaction ID', 'heartland-management-terminal') ?>:
                                 <strong><?php echo $_GET['transaction'] ?></strong>
                             </div>
                             <div class="misc-pub-section">
-                                Status:
+                                <?php _e('Status', 'heartland-management-terminal') ?>:
                                 <strong><?php echo $this->transactionStatusPretty($transaction) ?></strong>
                             </div>
                             <div class="misc-pub-section">
-                                Type:
+                                <?php _e('Type', 'heartland-management-terminal') ?>:
                                 <strong><?php echo $transaction->serviceName ?></strong>
                             </div>
                             <div class="misc-pub-section">
-                                Gateway Response:
+                                <?php _e('Gateway Response', 'heartland-management-terminal') ?>:
                                 <?php
                                 $gatewayResponse = null;
                                 if ($transaction->gatewayResponse()->message) {
@@ -94,7 +94,7 @@ $ignoredProperties = array(
                                 <strong><?php echo $this->dataOrDash($gatewayResponse) ?></strong>
                             </div>
                             <div class="misc-pub-section">
-                                Issuer/Processor Response:<br>
+                                <?php _e('Issuer/Processor Response', 'heartland-management-terminal') ?>:<br>
                                 <?php
                                 $issuerResponse = null;
                                 if ($transaction->responseCode) {
@@ -112,28 +112,28 @@ $ignoredProperties = array(
                     </div>
                     <div id="infodiv" class="postbox">
                         <h2 class="hndle">
-                            <span>Actions</span>
+                            <span><?php _e('Actions', 'heartland-management-terminal') ?></span>
                         </h2>
                         <div class="inside">
                             <?php if (in_array($transaction->transactionStatus, array('A'))) : ?>
                                 <div class="misc-pub-section">
-                                    <p>Void:</p>
-                                    <button name="command" value="void-transaction" class="button">Void</button>
+                                    <p><?php _e('Void', 'heartland-management-terminal') ?>:</p>
+                                    <button name="command" value="void-transaction" class="button"><?php _e('Void', 'heartland-management-terminal') ?></button>
                                 </div>
                             <?php endif; ?>
                             <?php if (in_array($transaction->transactionStatus, array('A', 'C'))) : ?>
                                 <div class="misc-pub-section">
-                                    <p>Refund:</p>
+                                    <p><?php _e('Refund', 'heartland-management-terminal') ?>:</p>
                                     <div>
-                                        <label for="refund-transaction-amount">Transaction amount:</label>
+                                        <label for="refund-transaction-amount"><?php _e('Transaction amount', 'heartland-management-terminal') ?>:</label>
                                         <input type="text" id="refund-transaction-amount" disabled="disabled" value="<?php echo !empty($transaction->settlementAmount) ? $transaction->settlementAmount : $transaction->authorizedAmount ?>">
                                     </div>
                                     <div>
-                                        <label for="refund-refund-amount">Refund amount:</label>
+                                        <label for="refund-refund-amount"><?php _e('Refund amount', 'heartland-management-terminal') ?>:</label>
                                         <input type="text" id="refund-refund-amount" name="refund_amount">
                                     </div>
                                     <p>
-                                        <button name="command" value="refund-transaction" class="button">Refund</button>
+                                        <button name="command" value="refund-transaction" class="button"><?php _e('Refund', 'heartland-management-terminal') ?></button>
                                     </p>
                                 </div>
                             <?php endif; ?>

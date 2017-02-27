@@ -13,7 +13,7 @@
     </h3>
     <div class="install">
         <a href="<?php echo get_admin_url(null, 'plugin-install.php?s=%22WooCommerce+SecureSubmit+Gateway%22&tab=search&type=term') ?>">
-            Install
+            <?php _e('Install', 'heartland-management-terminal') ?>
         </a>
     </div>
     <p class="description">
@@ -29,7 +29,7 @@
     </h3>
     <div class="install">
         <a href="<?php echo get_admin_url(null, 'plugin-install.php?s=%WP+SecureSubmit%22&tab=search&type=term') ?>">
-            Install
+            <?php _e('Install', 'heartland-management-terminal') ?>
         </a>
     </div>
     <p class="description">
@@ -45,7 +45,7 @@
     </h3>
     <div class="install">
         <a href="<?php echo get_admin_url(null, 'plugin-install.php?s=%22Heartland+Secure+Submit+Addon+for+Gravity+Forms%22&tab=search&type=term') ?>">
-            Install
+            <?php _e('Install', 'heartland-management-terminal') ?>
         </a>
     </div>
     <p class="description">
@@ -61,7 +61,7 @@
     </h3>
     <div class="install">
         <a href="<?php echo get_admin_url(null, 'plugin-install.php?s=%22Events+Manager+Pro+SecureSubmit+Gateway%22&tab=search&type=term') ?>">
-            Install
+            <?php _e('Install', 'heartland-management-terminal') ?>
         </a>
     </div>
     <p class="description">

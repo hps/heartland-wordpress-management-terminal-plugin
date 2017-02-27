@@ -66,7 +66,7 @@ class HeartlandTerminal_Submenu
         // register a new section in the settings page
         add_settings_section(
             $this->code . '_section_keys',
-            __('API Keys', $this->code),
+            __('API Keys', 'heartland-management-terminal'),
             array($this, 'settingsSectionDescription'),
             $this->code
         );
@@ -75,7 +75,7 @@ class HeartlandTerminal_Submenu
         add_settings_field(
             $this->code . '_public_api_key', // as of WP 4.6 this value is used only internally
             // use $args' label_for to populate the id inside the callback
-            __('Public API Key', $this->code),
+            __('Public API Key', 'heartland-management-terminal'),
             array($this, 'settingsTextInput'),
             $this->code,
             $this->code . '_section_keys',
@@ -89,7 +89,7 @@ class HeartlandTerminal_Submenu
         add_settings_field(
             $this->code . '_secret_api_key', // as of WP 4.6 this value is used only internally
             // use $args' label_for to populate the id inside the callback
-            __('Secret API Key', $this->code),
+            __('Secret API Key', 'heartland-management-terminal'),
             array($this, 'settingsTextInput'),
             $this->code,
             $this->code . '_section_keys',
@@ -104,7 +104,7 @@ class HeartlandTerminal_Submenu
         // register a new section in the settings page
         add_settings_section(
             $this->code . '_section_report',
-            __('List Transactions Settings', $this->code),
+            __('List Transactions Settings', 'heartland-management-terminal'),
             array($this, 'settingsSectionDescription'),
             $this->code
         );
@@ -113,43 +113,52 @@ class HeartlandTerminal_Submenu
         add_settings_field(
             $this->code . '_report_date_interval', // as of WP 4.6 this value is used only internally
             // use $args' label_for to populate the id inside the callback
-            __('Number of Days', $this->code),
+            __('Number of Days', 'heartland-management-terminal'),
             array($this, 'settingsTextInput'),
             $this->code,
             $this->code . '_section_report',
             array(
-               'label_for' => $this->code . '_report_date_interval',
-               'class' => $this->code . '_row',
-               'description' => 'The last "X" days to include for the "List Transactions" section. Default is "10" days.',
-               'default' => '',
+                'label_for' => $this->code . '_report_date_interval',
+                'class' => $this->code . '_row',
+                'description' => __(
+                    'The last "X" days to include for the "List Transactions" section. Default is "10" days.',
+                    $this->code
+                ),
+                'default' => '',
             )
         );
         add_settings_field(
             $this->code . '_report_page_limit', // as of WP 4.6 this value is used only internally
             // use $args' label_for to populate the id inside the callback
-            __('Number of Transactions per Page', $this->code),
+            __('Number of Transactions per Page', 'heartland-management-terminal'),
             array($this, 'settingsTextInput'),
             $this->code,
             $this->code . '_section_report',
             array(
-               'label_for' => $this->code . '_report_page_limit',
-               'class' => $this->code . '_row',
-               'description' => 'The number of transactions to display at once. Default is "10" transactions per page.',
-               'default' => '',
+                'label_for' => $this->code . '_report_page_limit',
+                'class' => $this->code . '_row',
+                'description' => __(
+                    'The number of transactions to display at once. Default is "10" transactions per page.',
+                    $this->code
+                ),
+                'default' => '',
             )
         );
         add_settings_field(
             $this->code . '_report_transient_timeout', // as of WP 4.6 this value is used only internally
             // use $args' label_for to populate the id inside the callback
-            __('Cache Timeout', $this->code),
+            __('Cache Timeout', 'heartland-management-terminal'),
             array($this, 'settingsTextInput'),
             $this->code,
             $this->code . '_section_report',
             array(
-               'label_for' => $this->code . '_report_transient_timeout',
-               'class' => $this->code . '_row',
-               'description' => 'Value should be in seconds. Default is "1800" (30 minutes).',
-               'default' => '',
+                'label_for' => $this->code . '_report_transient_timeout',
+                'class' => $this->code . '_row',
+                'description' => __(
+                    'Value should be in seconds. Default is "1800" (30 minutes).',
+                    $this->code
+                ),
+                'default' => '',
             )
         );
     }
@@ -173,7 +182,7 @@ class HeartlandTerminal_Submenu
                name="<?php echo $this->code ?>_options[<?php echo esc_attr($args['label_for']) ?>]"
                value="<?php echo (isset($options[$args['label_for']]) ? $options[$args['label_for']] : $args['default']) ?>">
         <p class="description">
-            <?php esc_html_e($args['description'], $this->code) ?>
+            <?php esc_html_e($args['description'], 'heartland-management-terminal') ?>
         </p>
         <?php
     }
@@ -207,8 +216,8 @@ class HeartlandTerminal_Submenu
     public function addAdminMenuPage()
     {
         add_menu_page(
-            'Heartland Payment Systems',
-            'Heartland',
+            __('Heartland Payment Systems', 'heartland-management-terminal'),
+            __('Heartland', 'heartland-management-terminal'),
             'administrator',
             __FILE__,
             array($this, 'adminHeartlandRoot'),
@@ -217,8 +226,8 @@ class HeartlandTerminal_Submenu
 
         add_submenu_page(
             __FILE__,
-            'Heartland Payment Systems - Transactions',
-            'List Transactions',
+            __('Heartland Payment Systems - Transactions', 'heartland-management-terminal'),
+            __('List Transactions', 'heartland-management-terminal'),
             'administrator',
             'heartland-transactions',
             array($this, 'adminHeartlandTransactions')
@@ -226,8 +235,8 @@ class HeartlandTerminal_Submenu
 
         add_submenu_page(
             __FILE__,
-            'Heartland Payment Systems - Options',
-            'Options',
+            __('Heartland Payment Systems - Options', 'heartland-management-terminal'),
+            __('Options', 'heartland-management-terminal'),
             'administrator',
             'heartland-options',
             array($this, 'adminHeartlandOptions')
@@ -278,10 +287,10 @@ class HeartlandTerminal_Submenu
         if (!empty($action) && !empty($id) && !empty($command)) {
             try {
                 $this->processActionCommand($id, $action, $command);
-                $this->addNotice('Transaction update succeeded.', 'notice-success');
+                $this->addNotice(__('Transaction update succeeded.', 'heartland-management-terminal'), 'notice-success');
             } catch (HpsException $e) {
                 $this->addNotice(
-                    sprintf('Transaction update failed. %s', $e->getMessage()),
+                    sprintf(__('Transaction update failed. %s', 'heartland-management-terminal'), $e->getMessage()),
                     'notice-error'
                 );
             }
@@ -506,7 +515,7 @@ class HeartlandTerminal_Submenu
     protected function performManageAction($transactionId)
     {
         $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
-        $title = 'Heartland Payment Systems - Manage Transaction';
+        $title = __('Heartland Payment Systems - Manage Transaction', 'heartland-management-terminal');
         $transaction = null;
 
         try {
@@ -532,25 +541,25 @@ class HeartlandTerminal_Submenu
 
         switch ($status) {
             case 'A':
-                $status = 'Active';
+                $status = __('Active', 'heartland-management-terminal');
                 break;
             case 'I':
-                $status = 'Inactive';
+                $status = __('Inactive', 'heartland-management-terminal');
                 break;
             case 'C':
-                $status = 'Cleared';
+                $status = __('Cleared', 'heartland-management-terminal');
                 break;
             case 'V':
-                $status = 'Voided';
+                $status = __('Voided', 'heartland-management-terminal');
                 break;
             case 'X':
-                $status = 'Autovoided';
+                $status = __('Autovoided', 'heartland-management-terminal');
                 break;
             case 'R':
-                $status = 'Reversed';
+                $status = __('Reversed', 'heartland-management-terminal');
                 break;
             case 'T':
-                $status = 'Timed-Out';
+                $status = __('Timed-Out', 'heartland-management-terminal');
                 break;
             default:
                 break;
