@@ -13,14 +13,15 @@
  *
  * @package Custom_Admin_Settings
  */
-class Submenu_Page {
-
-	/**
-	 * This function renders the contents of the page associated with the Submenu
-	 * that invokes the render method. In the context of this plugin, this is the
-	 * Submenu class.
-	 */
-	public function render() {
-		echo 'This is the basic submenu page.';
-	}
+class HeartlandTerminal_Submenu_Page
+{
+    /**
+     * This function renders the contents of the page associated with the Submenu
+     * that invokes the render method. In the context of this plugin, this is the
+     * Submenu class.
+     */
+    public function render()
+    {
+        echo 'This is the basic submenu page.';
+    }
 }

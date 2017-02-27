@@ -13,54 +13,211 @@
  *
  * @package Custom_Admin_Settings
  */
-class Submenu
+class HeartlandTerminal_Submenu
 {
     /**
-    * A reference the class responsible for rendering the submenu page.
-    *
-    * @var    Submenu_Page
-    * @access protected
-    */
+     * Plugin code
+     *
+     * @var string
+     * @access public
+     */
+    public $code = 'heartland_terminal';
+
+    /**
+     * A reference the class responsible for rendering the submenu page.
+     *
+     * @var    Submenu_Page
+     * @access protected
+     */
     protected $submenuPage;
 
     /**
-    * Initializes all of the partial classes.
-    *
-    * @param Submenu_Page $submenuPage A reference to the class that renders the
-    *                                  page for the plugin.
-    */
+     * Initializes all of the partial classes.
+     *
+     * @param Submenu_Page $submenuPage A reference to the class that renders the
+     *                                  page for the plugin.
+     */
     public function __construct($submenuPage)
     {
         $this->submenuPage = $submenuPage;
     }
 
     /**
-    * Adds a submenu for this plugin to the 'Tools' menu.
-    */
+     * Adds a submenu for this plugin to the 'Tools' menu.
+     */
     public function init()
     {
-        add_action('admin_menu', array($this, 'addAdminMenuPage'));
+        // includes
         include_once plugin_dir_path(__FILE__) . '../includes/Hps.php';
+
+        // hooks
+        add_action('admin_menu', array($this, 'addAdminMenuPage'));
+        add_action('admin_init', array($this, 'settingsInit'));
     }
 
     /**
-    * Creates the submenu item and calls on the Submenu Page object to render
-    * the actual contents of the page.
-    */
+     * Initializes settings for the plugin
+     */
+    public function settingsInit()
+    {
+        // register a new setting for the settings page
+        register_setting($this->code, $this->code . '_options');
+
+        // register a new section in the settings page
+        add_settings_section(
+            $this->code . '_section_keys',
+            __('API Keys', $this->code),
+            array($this, 'settingsSectionDescription'),
+            $this->code
+        );
+
+        // register a new field in the "API Keys" section, inside the settings page
+        add_settings_field(
+            $this->code . '_public_api_key', // as of WP 4.6 this value is used only internally
+            // use $args' label_for to populate the id inside the callback
+            __('Public API Key', $this->code),
+            array($this, 'settingsTextInput'),
+            $this->code,
+            $this->code . '_section_keys',
+            array(
+               'label_for' => $this->code . '_public_api_key',
+               'class' => $this->code . '_row',
+               'description' => '',
+               'default' => '',
+            )
+        );
+        add_settings_field(
+            $this->code . '_secret_api_key', // as of WP 4.6 this value is used only internally
+            // use $args' label_for to populate the id inside the callback
+            __('Secret API Key', $this->code),
+            array($this, 'settingsTextInput'),
+            $this->code,
+            $this->code . '_section_keys',
+            array(
+               'label_for' => $this->code . '_secret_api_key',
+               'class' => $this->code . '_row',
+               'description' => '',
+               'default' => '',
+            )
+        );
+
+        // register a new section in the settings page
+        add_settings_section(
+            $this->code . '_section_report',
+            __('List Transactions Settings', $this->code),
+            array($this, 'settingsSectionDescription'),
+            $this->code
+        );
+
+        // register a new field in the "List Transactions Settings" section, inside the settings page
+        add_settings_field(
+            $this->code . '_report_date_interval', // as of WP 4.6 this value is used only internally
+            // use $args' label_for to populate the id inside the callback
+            __('Number of Days', $this->code),
+            array($this, 'settingsTextInput'),
+            $this->code,
+            $this->code . '_section_report',
+            array(
+               'label_for' => $this->code . '_report_date_interval',
+               'class' => $this->code . '_row',
+               'description' => 'The last "X" days to include for the "List Transactions" section. Default is "10" days.',
+               'default' => '',
+            )
+        );
+        add_settings_field(
+            $this->code . '_report_page_limit', // as of WP 4.6 this value is used only internally
+            // use $args' label_for to populate the id inside the callback
+            __('Number of Transactions per Page', $this->code),
+            array($this, 'settingsTextInput'),
+            $this->code,
+            $this->code . '_section_report',
+            array(
+               'label_for' => $this->code . '_report_page_limit',
+               'class' => $this->code . '_row',
+               'description' => 'The number of transactions to display at once. Default is "10" transactions per page.',
+               'default' => '',
+            )
+        );
+        add_settings_field(
+            $this->code . '_report_transient_timeout', // as of WP 4.6 this value is used only internally
+            // use $args' label_for to populate the id inside the callback
+            __('Cache Timeout', $this->code),
+            array($this, 'settingsTextInput'),
+            $this->code,
+            $this->code . '_section_report',
+            array(
+               'label_for' => $this->code . '_report_transient_timeout',
+               'class' => $this->code . '_row',
+               'description' => 'Value should be in seconds. Default is "1800" (30 minutes).',
+               'default' => '',
+            )
+        );
+    }
+
+    public function settingsSectionDescription($args)
+    {
+        switch ($args['id']) {
+            case $this->code . '_section_keys':
+                break;
+            default:
+                echo '';
+        }
+    }
+
+    public function settingsTextInput($args)
+    {
+        $options = get_option($this->code . '_options');
+        ?>
+        <input id="<?php echo esc_attr($args['label_for']) ?>"
+               type="text" class="regular-text"
+               name="<?php echo $this->code ?>_options[<?php echo esc_attr($args['label_for']) ?>]"
+               value="<?php echo (isset($options[$args['label_for']]) ? $options[$args['label_for']] : $args['default']) ?>">
+        <p class="description">
+            <?php esc_html_e($args['description'], $this->code) ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Gets a setting value with a default fallback
+     *
+     * @param string $setting Setting key
+     * @param mixed  $default Default value
+     *
+     * @return mixed
+     */
+    public function getSetting($setting, $default = false)
+    {
+        $options = get_option($this->code . '_options');
+
+        if ($options === false) {
+            return $default;
+        }
+
+        $key = sprintf('%s_%s', $this->code, $setting);
+        return isset($options[$key]) && !empty($options[$key])
+            ? $options[$key]
+            : $default;
+    }
+
+    /**
+     * Creates the submenu item and calls on the Submenu Page object to render
+     * the actual contents of the page.
+     */
     public function addAdminMenuPage()
     {
         add_menu_page(
-            'Heartland Payment Systems Terminal',
+            'Heartland Payment Systems',
             'Heartland',
             'administrator',
             __FILE__,
             array($this, 'adminHeartlandRoot'),
-            plugins_url('/assets/images/heartland-icon.jpg', __FILE__)
+            plugins_url('/assets/images/heartland-icon.jpg', dirname(dirname(__FILE__)))
         );
 
         add_submenu_page(
             __FILE__,
-            'Heartland Transactions',
+            'Heartland Payment Systems - Transactions',
             'List Transactions',
             'administrator',
             'heartland-transactions',
@@ -69,7 +226,7 @@ class Submenu
 
         add_submenu_page(
             __FILE__,
-            'Heartland Options',
+            'Heartland Payment Systems - Options',
             'Options',
             'administrator',
             'heartland-options',
@@ -77,20 +234,41 @@ class Submenu
         );
     }
 
+    /**
+     * Entrypoint for the root page
+     */
     public function adminHeartlandRoot()
     {
-        $title = 'Heartland Payment Systems';
         include_once plugin_dir_path(__FILE__)
             . '../../templates/admin/root.php';
     }
 
+    /**
+     * Entrypoint for the options page
+     */
     public function adminHeartlandOptions()
     {
-        $title = 'Heartland Payment Systems - Options';
+        /**
+         * Limits accessing the options page based on a user capability
+         *
+         * Default value is 'manage_options'.
+         *
+         * @param string $capability
+         */
+        $capability = apply_filters($this->code . '_options_user_capability', 'manage_options');
+
+        // check user capabilities
+        if (!current_user_can($capability)) {
+            return;
+        }
+
         include_once plugin_dir_path(__FILE__)
             . '../../templates/admin/options.php';
     }
 
+    /**
+     * Entrypoint for the list and manage pages
+     */
     public function adminHeartlandTransactions()
     {
         $action = isset($_GET['action']) ? $_GET['action'] : '';
@@ -123,6 +301,12 @@ class Submenu
         $this->writeTransactionTable($this->getReport());
     }
 
+    /**
+     * Helper function for displaying notices in the plugin
+     *
+     * @param string $message Message to display
+     * @param string $classes Notice CSS classes
+     */
     protected function addNotice($message, $classes)
     {
         add_action('admin_notices', function () use ($message, $classes) {
@@ -131,6 +315,21 @@ class Submenu
         });
     }
 
+    /**
+     * Processes commands
+     *
+     * Currently limited to the following commands for the manage page:
+     *
+     * - void transaction
+     * - refund transaction
+     *
+     * @param string $id      Transaction ID
+     * @param string $action  Current page
+     * @param string $command Desired command
+     *
+     * @return HpsTransaction
+     * @throws HpsException
+     */
     protected function processActionCommand($id, $action, $command)
     {
         $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
@@ -176,26 +375,44 @@ class Submenu
         }
     }
 
+    /**
+     * Helper function for displaying data
+     *
+     * @param string $data  Data to display, if present
+     * @param string $empty Value to qualify `$data` as empty
+     *
+     * @return string
+     */
     protected function dataOrDash($data, $empty = null)
     {
         return empty($data) || $data === $empty
             ? '&mdash;' : $data;
     }
 
+    /**
+     * Gets transaction report data
+     *
+     * Stores data within the `$this->code . '_data'` transient to enable caching.
+     *
+     * Date interval for the report (start date - end date) is configurable through the
+     * "" option. Transient timeout is configurable through the "" option.
+     *
+     * @return HpsReportTransactionSummary[]
+     */
     protected function getReport()
     {
-        $items = get_transient('heartland-transactions');
+        $items = get_transient($this->code . '_data');
 
         if (false !== $items) {
             return json_decode($items);
         }
 
         $defaultTZ = date_default_timezone_get();
-        date_default_timezone_set("UTC");
+        date_default_timezone_set('UTC');
         $service = new HpsCreditService($this->getHeartlandConfiguration());
         $dateFormat = 'Y-m-d\TH:i:s.00\Z';
         $dateMinus10 = new DateTime();
-        $dateMinus10->sub(new DateInterval('P10D'));
+        $dateMinus10->sub(new DateInterval(sprintf('P%sD', $this->getSetting('report_date_interval', '10'))));
         $current = new DateTime();
 
         $items = $service->listTransactions($dateMinus10->format($dateFormat), $current->format($dateFormat));
@@ -204,13 +421,30 @@ class Submenu
         if (!defined('HOUR_IN_SECONDS')) {
             define('HOUR_IN_SECONDS', 60 * 60);
         }
-        ini_set('error_log', dirname(__FILE__) . '/error_log');
-        set_transient('heartland-transactions', json_encode($filteredItems), HOUR_IN_SECONDS / 2);
+
+        set_transient(
+            $this->code . '_data',
+            /**
+             * Filters the list transactions report
+             *
+             * @param HpsReportTransactionSummary[] $items
+             */
+            json_encode(apply_filters($this->code . '_report_items', $filteredItems)),
+            $this->getSetting('report_transient_timeout', HOUR_IN_SECONDS / 2)
+        );
 
         date_default_timezone_set($defaultTZ);
         return $filteredItems;
     }
 
+    /**
+     * Filters transaction report data with additional methods:
+     *
+     * - listTransactionsConvertExceptions
+     * - listTransactionsStripUndesiredTypes
+     *
+     * @return HpsReportTransactionSummary[]
+     */
     protected function filterTransactions($items)
     {
         return array_reverse(
@@ -221,6 +455,11 @@ class Submenu
         );
     }
 
+    /**
+     * Removes unimportant transaction types from the transaction report
+     *
+     * @return HpsReportTransactionSummary[]
+     */
     protected function listTransactionsStripUndesiredTypes($item)
     {
         return
@@ -228,6 +467,12 @@ class Submenu
             && !in_array($item->serviceName, array('GetAttachments'));
     }
 
+    /**
+     * Converts `Exception` objects in the transaction objects contained in the report
+     * to `stdClass` objects to remove the stack trace within the exceptions
+     *
+     * @return HpsReportTransactionSummary[]
+     */
     protected function listTransactionsConvertExceptions($item)
     {
         if (empty($item->exceptions)) {
@@ -253,6 +498,11 @@ class Submenu
         return $item;
     }
 
+    /**
+     * Attempts to display the desired transaction
+     *
+     * @param string $transactionId Desired transaction ID
+     */
     protected function performManageAction($transactionId)
     {
         $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
@@ -269,17 +519,13 @@ class Submenu
             . '../../templates/admin/manage-transaction.php';
     }
 
-    protected function performRefundAction($transactionId, $amount)
-    {
-        $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
-        return $service
-            ->refund()
-            ->withAmount($amount)
-            ->withTransactionId($transactionId)
-            ->withCurrency('usd')
-            ->execute();
-    }
-
+    /**
+     * Stylizes the transaction status for merchant consumption
+     *
+     * @param HpsReportTransactionDetails $transaction Transaction details
+     *
+     * @return string
+     */
     protected function transactionStatusPretty($transaction)
     {
         $status = $transaction->transactionStatus;
@@ -312,22 +558,28 @@ class Submenu
         return $this->dataOrDash($status);
     }
 
+    /**
+     * Gets the configuration based on the merchant's secret API key
+     *
+     * @return HpsServicesConfig
+     */
     protected function getHeartlandConfiguration()
     {
-        $secretApiKey = "skapi_cert_MYl2AQAowiQAbLp5JesGKh7QFkcizOP2jcX9BrEMqQ";
         $config = new HpsServicesConfig();
-        $config->secretApiKey = $secretApiKey;
+        $config->secretApiKey = $this->getSetting('secret_api_key');
         $config->versionNumber = '1510';
         $config->developerId = '002914';
         return $config;
     }
 
+    /**
+     * Builds the transaction list table
+     */
     protected function writeTransactionTable($items)
     {
         $page = esc_url(get_admin_url(null, 'admin.php?page=heartland-transactions'));
-        $title = 'Heartland Payment Systems - Transactions';
         $pagenum = isset($_GET['pagenum']) ? absint($_GET['pagenum']) : 1;
-        $limit = 10;
+        $limit = intval($this->getSetting('report_page_limit', '10'));
         $offset = ($pagenum - 1) * $limit;
         $total = count($items);
         $numOfPages = ceil($total/$limit);

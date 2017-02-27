@@ -2,14 +2,14 @@
 /**
  * @link              https://developer.heartlandpaymentsystems.com/
  * @since             1.0.0
- * @package           Heartland_Terminal
+ * @package           HeartlandTerminal
  *
  * @wordpress-plugin
- * Plugin Name:       Heartland Terminal
+ * Plugin Name:       Heartland Management Terminal
  * Plugin URI:        https://developer.heartlandpaymentsystems.com/
  * Description:       View and Manage your Heartland transactions.
  * Version:           1.0.0
- * Author:            Team GSD
+ * Author:            Heartland Payment Systems
  * Author URI:        https://developer.heartlandpaymentsystems.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -40,7 +40,7 @@ class HeartlandTerminal
     */
     public function heartlandTerminalLoad()
     {
-        $plugin = new Submenu(new Submenu_Page());
+        $plugin = new HeartlandTerminal_Submenu(new HeartlandTerminal_Submenu_Page());
         $plugin->init();
     }
 }
