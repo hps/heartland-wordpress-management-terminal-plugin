@@ -4,12 +4,6 @@
     <?php _e('This management terminal exposes limited functionality to manage transactions through your WordPress installation.', 'heartland-management-terminal') ?>
     <?php _e('Current functionality may not be a one-to-one match for Portico Virtual Terminal.', 'heartland-management-terminal') ?>
 </p>
-<p>
-    <?php echo sprintf(
-        __('Please <a href="%s">contact support</a> with any issues', 'heartland-management-terminal'),
-        'https://developer.heartlandpaymentsystems.com/support'
-    ); ?>
-</p>
 
 <section class="plugin">
     <h3>
@@ -75,5 +69,11 @@
         <?php _e('Accept payments with Secure Submit and Events Manager Pro', 'heartland-management-terminal') ?>
     </p>
 </section>
+<p>
+    <?php echo sprintf(
+        __('Please <a href="%s">contact support</a> with any issues.', 'heartland-management-terminal'),
+        'https://developer.heartlandpaymentsystems.com/support'
+    ); ?>
+</p>
 
 <?php require 'footer.php'; ?>
