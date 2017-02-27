@@ -1,14 +1,21 @@
 <?php require 'header.php'; ?>
 
 <p>
-    intro with links to dev portal and support information
+    <?php _e('This management terminal exposes limited functionality to manage transactions through your WordPress installation.', 'heartland-management-terminal') ?>
+    <?php _e('Current functionality may not be a one-to-one match for Portico Virtual Terminal.', 'heartland-management-terminal') ?>
+</p>
+<p>
+    <?php echo sprintf(
+        __('Please <a href="%s">contact support</a> with any issues', 'heartland-management-terminal'),
+        'https://developer.heartlandpaymentsystems.com/support'
+    ); ?>
 </p>
 
 <section class="plugin">
     <h3>
         <a href="https://wordpress.org/plugins/woocommerce-securesubmit-gateway/"
            target="_blank">
-           WooCommerce SecureSubmit Gateway
+            <?php _e('WooCommerce SecureSubmit Gateway', 'heartland-management-terminal') ?>
         </a>
     </h3>
     <div class="install">
@@ -17,14 +24,14 @@
         </a>
     </div>
     <p class="description">
-        Accept payments with Secure Submit and WooCommerce
+        <?php _e('Accept payments with Secure Submit and WooCommerce', 'heartland-management-terminal') ?>
     </p>
 </section>
 <section class="plugin">
     <h3>
         <a href="https://wordpress.org/plugins/securesubmit/"
            target="_blank">
-           WP SecureSubmit
+            <?php _e('WP SecureSubmit', 'heartland-management-terminal') ?>
         </a>
     </h3>
     <div class="install">
@@ -33,14 +40,14 @@
         </a>
     </div>
     <p class="description">
-        Create simple forms with WP SecureSubmit to take payments
+        <?php _e('Create simple forms with WP SecureSubmit to take payments', 'heartland-management-terminal') ?>
     </p>
 </section>
 <section class="plugin">
     <h3>
         <a href="https://wordpress.org/plugins-wp/heartland-secure-submit-addon-for-gravity-forms/"
            target="_blank">
-           Heartland Secure Submit Addon for Gravity Forms
+            <?php _e('Heartland Secure Submit Addon for Gravity Forms', 'heartland-management-terminal') ?>
         </a>
     </h3>
     <div class="install">
@@ -49,14 +56,14 @@
         </a>
     </div>
     <p class="description">
-        Leverage Gravity Forms to create forms and accept payments
+        <?php _e('Leverage Gravity Forms to create forms and accept payments', 'heartland-management-terminal') ?>
     </p>
 </section>
 <section class="plugin">
     <h3>
         <a href="https://wordpress.org/plugins-wp/events-manager-pro-securesubmit-gateway/"
            target="_blank">
-           Events Manager Pro SecureSubmit Gateway
+            <?php _e('Events Manager Pro SecureSubmit Gateway', 'heartland-management-terminal') ?>
         </a>
     </h3>
     <div class="install">
@@ -65,7 +72,7 @@
         </a>
     </div>
     <p class="description">
-        Accept payments with Secure Submit and Events Manager Pro
+        <?php _e('Accept payments with Secure Submit and Events Manager Pro', 'heartland-management-terminal') ?>
     </p>
 </section>
 
