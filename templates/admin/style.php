@@ -16,7 +16,7 @@
 	    display: block;
 	    margin: 10px 0 15px 0;
 	    font-size: 15px;
-	    background-image: url(/wp-content/plugins/heartland-wordpress-terminal/templates/admin/assets/logo.png);
+	    background-image: url(<?php echo plugins_url('/assets/logo.png', __FILE__) ?>);
 	    background-repeat: no-repeat;
 	    background-position: 20px center;
 	    background-size: auto 20px;
