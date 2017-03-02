@@ -122,7 +122,7 @@ class HeartlandTerminal_Submenu
                 'class' => $this->code . '_row',
                 'description' => __(
                     'The last "X" days to include for the "List Transactions" section. Default is "10" days.',
-                    $this->code
+                    'heartland-management-terminal'
                 ),
                 'default' => '',
             )
@@ -139,7 +139,7 @@ class HeartlandTerminal_Submenu
                 'class' => $this->code . '_row',
                 'description' => __(
                     'The number of transactions to display at once. Default is "10" transactions per page.',
-                    $this->code
+                    'heartland-management-terminal'
                 ),
                 'default' => '',
             )
@@ -156,13 +156,18 @@ class HeartlandTerminal_Submenu
                 'class' => $this->code . '_row',
                 'description' => __(
                     'Value should be in seconds. Default is "1800" (30 minutes).',
-                    $this->code
+                    'heartland-management-terminal'
                 ),
                 'default' => '',
             )
         );
     }
 
+    /**
+     * Outputs a setting section's description
+     *
+     * @param array $args Section arguments
+     */
     public function settingsSectionDescription($args)
     {
         switch ($args['id']) {
@@ -173,14 +178,27 @@ class HeartlandTerminal_Submenu
         }
     }
 
+    /**
+     * Outputs a setting's input HTML
+     *
+     * @param array $args Setting arguments
+     */
     public function settingsTextInput($args)
     {
         $options = get_option($this->code . '_options');
+        $name = sprintf(
+            '%s_options[%s]',
+            $this->code,
+            esc_attr($args['label_for'])
+        );
+        $value = isset($options[$args['label_for']])
+            ? $options[$args['label_for']]
+            : $args['default'];
         ?>
         <input id="<?php echo esc_attr($args['label_for']) ?>"
                type="text" class="regular-text"
-               name="<?php echo $this->code ?>_options[<?php echo esc_attr($args['label_for']) ?>]"
-               value="<?php echo (isset($options[$args['label_for']]) ? $options[$args['label_for']] : $args['default']) ?>">
+               name="<?php echo $name ?>"
+               value="<?php echo $value ?>">
         <p class="description">
             <?php esc_html_e($args['description'], 'heartland-management-terminal') ?>
         </p>
@@ -287,7 +305,10 @@ class HeartlandTerminal_Submenu
         if (!empty($action) && !empty($id) && !empty($command)) {
             try {
                 $this->processActionCommand($id, $action, $command);
-                $this->addNotice(__('Transaction update succeeded.', 'heartland-management-terminal'), 'notice-success');
+                $this->addNotice(
+                    __('Transaction update succeeded.', 'heartland-management-terminal'),
+                    'notice-success'
+                );
             } catch (HpsException $e) {
                 $this->addNotice(
                     sprintf(__('Transaction update failed. %s', 'heartland-management-terminal'), $e->getMessage()),
@@ -325,66 +346,6 @@ class HeartlandTerminal_Submenu
     }
 
     /**
-     * Processes commands
-     *
-     * Currently limited to the following commands for the manage page:
-     *
-     * - void transaction
-     * - refund transaction
-     *
-     * @param string $id      Transaction ID
-     * @param string $action  Current page
-     * @param string $command Desired command
-     *
-     * @return HpsTransaction
-     * @throws HpsException
-     */
-    protected function processActionCommand($id, $action, $command)
-    {
-        $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
-
-        if ($action === 'manage' && $command === 'void-transaction') {
-            return $service->void()
-                ->withTransactionId($id)
-                ->execute();
-        }
-
-        if ($action === 'manage' && $command === 'refund-transaction') {
-            $transaction = $service->get($id)->execute();
-            $amount = !empty($transaction->settlementAmount)
-                ? $transaction->settlementAmount
-                : $transaction->authorizedAmount;
-            $authAmount = isset($_POST['refund_amount']) && !empty($_POST['refund_amount'])
-                ? $_POST['refund_amount']
-                : false;
-
-            $builder = $service->refund();
-
-            if ($transaction->transactionStatus === 'A') {
-                $builder = $service->reverse();
-            }
-
-            $builder = $builder
-                ->withTransactionId($id)
-                ->withCurrency('usd');
-
-            if ($builder instanceof HpsCreditServiceRefundBuilder) {
-                $builder = $builder->withAmount(
-                    $authAmount !== false ? $authAmount : $amount
-                );
-            } elseif ($builder instanceof HpsCreditServiceReverseBuilder) {
-                $builder = $builder
-                    ->withAmount($transaction->authorizedAmount)
-                    ->withAuthAmount(
-                        $authAmount !== false ? ($amount - $authAmount) : null
-                    );
-            }
-
-            return $builder->execute();
-        }
-    }
-
-    /**
      * Helper function for displaying data
      *
      * @param string $data  Data to display, if present
@@ -398,6 +359,38 @@ class HeartlandTerminal_Submenu
             ? '&mdash;' : $data;
     }
 
+
+    /**
+     * Filters transaction report data with additional methods:
+     *
+     * - listTransactionsConvertExceptions
+     * - listTransactionsStripUndesiredTypes
+     *
+     * @return HpsReportTransactionSummary[]
+     */
+    protected function filterTransactions($items)
+    {
+        return array_reverse(
+            array_map(
+                array($this, 'listTransactionsConvertExceptions'),
+                array_filter($items, array($this, 'listTransactionsStripUndesiredTypes'))
+            )
+        );
+    }
+
+    /**
+     * Gets the configuration based on the merchant's secret API key
+     *
+     * @return HpsServicesConfig
+     */
+    protected function getHeartlandConfiguration()
+    {
+        $config = new HpsServicesConfig();
+        $config->secretApiKey = $this->getSetting('secret_api_key');
+        $config->versionNumber = '1510';
+        $config->developerId = '002914';
+        return $config;
+    }
     /**
      * Gets transaction report data
      *
@@ -447,33 +440,32 @@ class HeartlandTerminal_Submenu
     }
 
     /**
-     * Filters transaction report data with additional methods:
+     * Creates a service object for support transaction types based on the original
+     * transaction's ServiceName from the gateway
      *
-     * - listTransactionsConvertExceptions
-     * - listTransactionsStripUndesiredTypes
+     * Debit refunds need the original payment data to process, so those
+     * transactions are ignored currently.
      *
-     * @return HpsReportTransactionSummary[]
+     * @todo Add handling for AltPayments (PayPal)
+     * @todo Add handling for RecurringBilling (Credit + Check)
+     *
+     * @param HpsReportTransactionDetails $transaction Original transaction
+     *
+     * @return false|HpsGatewayServiceInterface
      */
-    protected function filterTransactions($items)
+    protected function getServiceForTransaction(HpsReportTransactionDetails $transaction)
     {
-        return array_reverse(
-            array_map(
-                array($this, 'listTransactionsConvertExceptions'),
-                array_filter($items, array($this, 'listTransactionsStripUndesiredTypes'))
-            )
-        );
-    }
+        $service = false;
 
-    /**
-     * Removes unimportant transaction types from the transaction report
-     *
-     * @return HpsReportTransactionSummary[]
-     */
-    protected function listTransactionsStripUndesiredTypes($item)
-    {
-        return
-            substr($item->serviceName, 0, strlen('Report')) !== 'Report'
-            && !in_array($item->serviceName, array('GetAttachments'));
+        if (substr($transaction->serviceName, 0, 6) === 'Credit') {
+            $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
+        } elseif (substr($transaction->serviceName, 0, 5) === 'Check') {
+            $service = new HpsFluentCheckService($this->getHeartlandConfiguration());
+        } elseif (substr($transaction->serviceName, 0, 8) === 'GiftCard') {
+            $service = new HpsFluentGiftCardService($this->getHeartlandConfiguration());
+        }
+
+        return $service;
     }
 
     /**
@@ -508,6 +500,18 @@ class HeartlandTerminal_Submenu
     }
 
     /**
+     * Removes unimportant transaction types from the transaction report
+     *
+     * @return HpsReportTransactionSummary[]
+     */
+    protected function listTransactionsStripUndesiredTypes($item)
+    {
+        return
+            substr($item->serviceName, 0, strlen('Report')) !== 'Report'
+            && !in_array($item->serviceName, array('GetAttachments'));
+    }
+
+    /**
      * Attempts to display the desired transaction
      *
      * @param string $transactionId Desired transaction ID
@@ -526,6 +530,122 @@ class HeartlandTerminal_Submenu
 
         include_once plugin_dir_path(__FILE__)
             . '../../templates/admin/manage-transaction.php';
+    }
+
+    /**
+     * Processes commands
+     *
+     * Currently limited to the following commands for the manage page:
+     *
+     * - void transaction
+     * - refund transaction
+     *
+     * @param string $id      Transaction ID
+     * @param string $action  Current page
+     * @param string $command Desired command
+     *
+     * @return HpsTransaction
+     * @throws HpsException
+     */
+    protected function processActionCommand($id, $action, $command)
+    {
+        $transaction =
+            (new HpsFluentCreditService($this->getHeartlandConfiguration()))
+                ->get($id)
+                ->execute();
+
+        $service = $this->getServiceForTransaction($transaction);
+
+        if (false === $service) {
+            throw new Exception(
+                __('Transaction cannot be managed at this time.', 'heartland-management-terminal')
+            );
+        }
+
+        // void
+        if ($action === 'manage' && $command === 'void-transaction') {
+            return $service->void()
+                ->withTransactionId($id)
+                ->execute();
+        }
+
+        // exit early if a refund isn't possible
+        if ($action === 'manage' && $command !== 'refund-transaction'
+            || $service instanceof HpsFluentCheckService
+        ) {
+            throw new Exception(
+                __('Transaction cannot be managed at this time.', 'heartland-management-terminal')
+            );
+        }
+
+        // refund
+        $amount = !empty($transaction->settlementAmount)
+            ? $transaction->settlementAmount
+            : $transaction->authorizedAmount;
+        $refundAmount = isset($_POST['refund_amount']) && !empty($_POST['refund_amount'])
+            ? $_POST['refund_amount']
+            : false;
+
+        $builder = null;
+
+        // transaction needs to be active (not in closed batch) to reverse.
+        // gift service method for refund is reverse.
+        if ($transaction->transactionStatus === 'A'
+            || $service instanceof HpsFluentGiftCardService
+        ) {
+            $builder = $service->reverse();
+        } else {
+            $builder = $service->refund();
+        }
+
+        $builder = $builder
+            ->withTransactionId($id)
+            ->withCurrency('usd');
+
+        // only credit service has a reverse capable of changing the authorized amount
+        // that requires the original auth amount
+        if ($builder instanceof HpsCreditServiceReverseBuilder) {
+            $builder = $builder
+                ->withAmount($transaction->authorizedAmount)
+                ->withAuthAmount(
+                    $refundAmount !== false ? ($amount - $refundAmount) : null
+                );
+        } else {
+            $builder = $builder->withAmount(
+                $refundAmount !== false ? $refundAmount : $amount
+            );
+        }
+
+        return $builder->execute();
+    }
+
+    /**
+     * Determines if the transaction can be refunded
+     *
+     * @param HpsReportTransactionDetails $transaction Transaction details
+     *
+     * @return bool
+     */
+    protected function transactionCanRefund(HpsReportTransactionDetails $transaction)
+    {
+        $service = $this->getServiceForTransaction($transaction);
+        return $service !== false
+            && !($service instanceof HpsFluentCheckService)
+            && in_array($transaction->transactionStatus, array('A', 'C'));
+    }
+
+    /**
+     * Determines if the transaction can be voided
+     *
+     * @param HpsReportTransactionDetails $transaction Transaction details
+     *
+     * @return bool
+     */
+    protected function transactionCanVoid(HpsReportTransactionDetails $transaction)
+    {
+        $service = $this->getServiceForTransaction($transaction);
+        return $service !== false
+            && in_array($transaction->transactionStatus, array('A'));
     }
 
     /**
@@ -568,21 +688,9 @@ class HeartlandTerminal_Submenu
     }
 
     /**
-     * Gets the configuration based on the merchant's secret API key
-     *
-     * @return HpsServicesConfig
-     */
-    protected function getHeartlandConfiguration()
-    {
-        $config = new HpsServicesConfig();
-        $config->secretApiKey = $this->getSetting('secret_api_key');
-        $config->versionNumber = '1510';
-        $config->developerId = '002914';
-        return $config;
-    }
-
-    /**
      * Builds the transaction list table
+     *
+     * @param HpsReportTransactionSummary[] $items List of items to display
      */
     protected function writeTransactionTable($items)
     {

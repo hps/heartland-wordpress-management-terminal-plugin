@@ -115,13 +115,13 @@ $ignoredProperties = array(
                             <span><?php _e('Actions', 'heartland-management-terminal') ?></span>
                         </h2>
                         <div class="inside">
-                            <?php if (in_array($transaction->transactionStatus, array('A'))) : ?>
+                            <?php if ($this->transactionCanVoid($transaction)) : ?>
                                 <div class="misc-pub-section">
                                     <p><?php _e('Void', 'heartland-management-terminal') ?>:</p>
                                     <button name="command" value="void-transaction" class="button"><?php _e('Void', 'heartland-management-terminal') ?></button>
                                 </div>
                             <?php endif; ?>
-                            <?php if (in_array($transaction->transactionStatus, array('A', 'C'))) : ?>
+                            <?php if ($this->transactionCanRefund($transaction)) : ?>
                                 <div class="misc-pub-section">
                                     <p><?php _e('Refund', 'heartland-management-terminal') ?>:</p>
                                     <div>
