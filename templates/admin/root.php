@@ -91,7 +91,7 @@
 
 <section class="plugin plugin-contact">
     <?php echo sprintf(
-        __('<a class="square" href="%s"><img src="/wp-content/plugins/heartland-wordpress-terminal/templates/admin/assets/h.png" /><strong>Contact Heartland Payment Systems Support</strong><span class="description">Please contact support with any questions or issues you have.</span></a>', 'heartland-management-terminal'),
+        __('<a target="_blank" class="square" href="%s"><img src="/wp-content/plugins/heartland-wordpress-terminal/templates/admin/assets/h.png" /><strong>Contact Heartland Payment Systems Support</strong><span class="description">Please contact support with any questions or issues you have.</span></a>', 'heartland-management-terminal'),
         'https://developer.heartlandpaymentsystems.com/support'
     ); ?>
 </section>
