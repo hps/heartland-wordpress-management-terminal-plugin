@@ -40,8 +40,10 @@ class HeartlandTerminal
     *
     * @since 1.0.0
     */
+
     public function heartlandTerminalLoad()
-    {
+    {   
+
         $plugin = new HeartlandTerminal_Submenu(new HeartlandTerminal_Submenu_Page());
         $plugin->init();
         load_plugin_textdomain(
@@ -52,3 +54,10 @@ class HeartlandTerminal
     }
 }
 new HeartlandTerminal();
+
+function admin_custom_css()
+{ 
+    wp_enqueue_style( 'admin_stylesheet', 'templates/style.css');
+}
+
+add_action('admin_init', 'admin_custom_css' );
