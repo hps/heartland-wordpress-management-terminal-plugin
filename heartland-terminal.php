@@ -54,10 +54,3 @@ class HeartlandTerminal
     }
 }
 new HeartlandTerminal();
-
-function admin_custom_css()
-{ 
-    wp_enqueue_style( 'admin_stylesheet', 'templates/style.css');
-}
-
-add_action('admin_init', 'admin_custom_css' );

@@ -221,7 +221,7 @@ class HeartlandTerminal_Submenu
             'administrator',
             __FILE__,
             array($this, 'adminHeartlandRoot'),
-            plugins_url('/assets/images/heartland-icon.jpg', dirname(dirname(__FILE__)))
+            plugins_url('/templates/admin/assets/faviconpng.png', dirname(dirname(__FILE__)))
         );
 
         add_submenu_page(
