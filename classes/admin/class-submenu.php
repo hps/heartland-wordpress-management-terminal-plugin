@@ -234,17 +234,17 @@ class HeartlandTerminal_Submenu
     public function addAdminMenuPage()
     {
         add_menu_page(
-            __('Heartland Payment Systems', 'heartland-management-terminal'),
+            __('Dashboard', 'heartland-management-terminal'),
             __('Heartland', 'heartland-management-terminal'),
             'administrator',
             __FILE__,
             array($this, 'adminHeartlandRoot'),
-            plugins_url('/assets/images/heartland-icon.jpg', dirname(dirname(__FILE__)))
+            plugins_url('/templates/admin/assets/faviconpng.png', dirname(dirname(__FILE__)))
         );
 
         add_submenu_page(
             __FILE__,
-            __('Heartland Payment Systems - Transactions', 'heartland-management-terminal'),
+            __('Transactions', 'heartland-management-terminal'),
             __('List Transactions', 'heartland-management-terminal'),
             'administrator',
             'heartland-transactions',
@@ -253,7 +253,7 @@ class HeartlandTerminal_Submenu
 
         add_submenu_page(
             __FILE__,
-            __('Heartland Payment Systems - Options', 'heartland-management-terminal'),
+            __('Options', 'heartland-management-terminal'),
             __('Options', 'heartland-management-terminal'),
             'administrator',
             'heartland-options',

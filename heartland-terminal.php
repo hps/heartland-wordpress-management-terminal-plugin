@@ -40,8 +40,10 @@ class HeartlandTerminal
     *
     * @since 1.0.0
     */
+
     public function heartlandTerminalLoad()
-    {
+    {   
+
         $plugin = new HeartlandTerminal_Submenu(new HeartlandTerminal_Submenu_Page());
         $plugin->init();
         load_plugin_textdomain(
