@@ -253,6 +253,15 @@ class HeartlandTerminal_Submenu
 
         add_submenu_page(
             __FILE__,
+            __('Take a Payment', 'heartland-management-terminal'),
+            __('Take a Payment', 'heartland-management-terminal'),
+            'administrator',
+            'heartland-payments',
+            array($this, 'adminHeartlandPayments')
+        );
+
+        add_submenu_page(
+            __FILE__,
             __('Options', 'heartland-management-terminal'),
             __('Options', 'heartland-management-terminal'),
             'administrator',
@@ -291,6 +300,33 @@ class HeartlandTerminal_Submenu
 
         include_once plugin_dir_path(__FILE__)
             . '../../templates/admin/options.php';
+    }
+
+    /**
+     * Entrypoint for the payments page
+     */
+    public function adminHeartlandPayments()
+    {
+        $action = isset($_GET['action']) ? $_GET['action'] : '';
+        $command = isset($_GET['command']) ? $_GET['command'] : '';
+
+        if (!empty($action) && !empty($command)) {
+            try {
+                $this->processActionCommand(null, $action, $command);
+                $this->addNotice(
+                    __('The payment was successful.', 'heartland-management-terminal'),
+                    'notice-success'
+                );
+            } catch (HpsException $e) {
+                $this->addNotice(
+                    sprintf(__('The payment has failed. %s', 'heartland-management-terminal'), $e->getMessage()),
+                    'notice-error'
+                );
+            }
+        }
+
+        include_once plugin_dir_path(__FILE__)
+            . '../../templates/admin/payments.php';
     }
 
     /**
@@ -533,6 +569,34 @@ class HeartlandTerminal_Submenu
     }
 
     /**
+     * Creates the HpsCardHolder object for charging a credit card
+     */
+    protected function getCardHolder() {
+        $cardHolder = new HpsCardHolder();
+
+        $cardHolder->address = $_GET['Address'];
+        $cardHolder->city = $_GET['City'];
+        $cardHolder->state = $_GET['State'];
+        $cardHolder->zip = $_GET['Zip'];
+        $cardHolder->email = $_GET['Email'];
+        $cardHolder->phone = $_GET['PhoneNumber'];
+
+        $cardHolder->address = $this->getAddress();
+
+        return $cardHolder;
+    }
+
+    /**
+     * Creates the HpsAddress object for a given HpsCardHolder
+     */
+    protected function getAddress() {
+        $cardHolderAddress = new HpsAddress();
+
+        $cardHolderAddress->firstName = $_GET['FirstName'];
+        $cardHolderAddress->lastName = $_GET['LastName'];
+    }
+
+    /**
      * Processes commands
      *
      * Currently limited to the following commands for the manage page:
@@ -549,6 +613,17 @@ class HeartlandTerminal_Submenu
      */
     protected function processActionCommand($id, $action, $command)
     {
+        // charge
+        if ($action === 'charge' && $command === 'make-credit-payment') {
+            $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
+
+            return $service->charge()
+                ->withAmount($_GET['payment-amount'])
+                ->withToken($_GET['token_value'])
+                ->withCardHolder($this->getCardHolder())
+                ->execute();
+        }
+
         $transaction =
             (new HpsFluentCreditService($this->getHeartlandConfiguration()))
                 ->get($id)
