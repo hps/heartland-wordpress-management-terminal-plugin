@@ -317,6 +317,9 @@ class HeartlandTerminal_Submenu
                     __('The payment was successful.', 'heartland-management-terminal'),
                     'notice-success'
                 );
+
+                // clear report cache
+                delete_transient(get_transient($this->code . '_data'));
             } catch (HpsException $e) {
                 $this->addNotice(
                     sprintf(__('The payment has failed. %s', 'heartland-management-terminal'), $e->getMessage()),
@@ -345,6 +348,9 @@ class HeartlandTerminal_Submenu
                     __('Transaction update succeeded.', 'heartland-management-terminal'),
                     'notice-success'
                 );
+
+                // clear report cache
+                delete_transient(get_transient($this->code . '_data'));
             } catch (HpsException $e) {
                 $this->addNotice(
                     sprintf(__('Transaction update failed. %s', 'heartland-management-terminal'), $e->getMessage()),
