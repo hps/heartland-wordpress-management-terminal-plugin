@@ -3,134 +3,155 @@
 <?php do_action('admin_notices'); ?>
 
 <form id="iframes" method="get" action="<?php echo $page ?>">
+
     <input type="hidden" name="page" value="heartland-payments">
     <input type="hidden" name="action" value="charge">
-    <input type="hidden" name="command" value="make-credit-payment"
+    <input type="hidden" name="command" value="make-credit-payment">
 
-    <div class="form-group row">
-        <label for="FirstName" class="col-sm-2 control-label">First Name</label>
-        <div class="col-sm-10">
-            <input type="text" name="FirstName" />
+    <div id="customer-panels" class="payment-wrappers">
+
+        <div class="payment-panel">
+
+            <h1>1. Customer Info</h1>
+
+            <div class="field">
+                <label for="FirstName" class="col-sm-2 control-label">First Name:</label>
+                <input type="text" id="FirstName" name="FirstName" />
+            </div>
+
+            <div class="field">
+                <label for="LastName" class="col-sm-2 control-label">Last Name:</label>
+                <input type="text" id="LastName" name="LastName" />
+            </div>
+
+            <div class="field">
+                <label for="PhoneNumber" class="col-sm-2 control-label">Phone Number:</label>
+                <input type="text" id="PhoneNumber" name="PhoneNumber" />
+            </div>
+
+            <div class="field">
+                <label for="Email" class="col-sm-2 control-label">Email:</label>
+                <input type="text" id="Email" name="Email" />
+            </div>
+
+            <div class="field">
+                <label for="Address" class="col-sm-2 control-label">Address:</label>
+                <input type="text" id="Address" name="Address" />
+            </div>
+
+            <div class="field">
+                <label for="City" class="col-sm-2 control-label">City:</label>
+                <input type="text" id="City" name="City" />
+            </div>
+
+            <div class="field">
+                <label for="State" class="col-sm-2 control-label">State:</label>
+                <select Name="State" id="State">
+                    <option value="">Pick a State</option>
+                    <option value="AL">Alabama</option>
+                    <option value="AK">Alaska</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="AR">Arkansas</option>
+                    <option value="CA">California</option>
+                    <option value="CO">Colorado</option>
+                    <option value="CT">Connecticut</option>
+                    <option value="DE">Delaware</option>
+                    <option value="DC">District Of Columbia</option>
+                    <option value="FL">Florida</option>
+                    <option value="GA">Georgia</option>
+                    <option value="HI">Hawaii</option>
+                    <option value="ID">Idaho</option>
+                    <option value="IL">Illinois</option>
+                    <option value="IN">Indiana</option>
+                    <option value="IA">Iowa</option>
+                    <option value="KS">Kansas</option>
+                    <option value="KY">Kentucky</option>
+                    <option value="LA">Louisiana</option>
+                    <option value="ME">Maine</option>
+                    <option value="MD">Maryland</option>
+                    <option value="MA">Massachusetts</option>
+                    <option value="MI">Michigan</option>
+                    <option value="MN">Minnesota</option>
+                    <option value="MS">Mississippi</option>
+                    <option value="MO">Missouri</option>
+                    <option value="MT">Montana</option>
+                    <option value="NE">Nebraska</option>
+                    <option value="NV">Nevada</option>
+                    <option value="NH">New Hampshire</option>
+                    <option value="NJ">New Jersey</option>
+                    <option value="NM">New Mexico</option>
+                    <option value="NY">New York</option>
+                    <option value="NC">North Carolina</option>
+                    <option value="ND">North Dakota</option>
+                    <option value="OH">Ohio</option>
+                    <option value="OK">Oklahoma</option>
+                    <option value="OR">Oregon</option>
+                    <option value="PA">Pennsylvania</option>
+                    <option value="RI">Rhode Island</option>
+                    <option value="SC">South Carolina</option>
+                    <option value="SD">South Dakota</option>
+                    <option value="TN">Tennessee</option>
+                    <option value="TX">Texas</option>
+                    <option value="UT">Utah</option>
+                    <option value="VT">Vermont</option>
+                    <option value="VA">Virginia</option>
+                    <option value="WA">Washington</option>
+                    <option value="WV">West Virginia</option>
+                    <option value="WI">Wisconsin</option>
+                    <option value="WY">Wyoming</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="Zip" class="col-sm-2 control-label">Zip:</label>
+                <input type="text" id="Zip" name="Zip" />
+            </div>
+
         </div>
-    </div>
-    <div class="form-group row">
-        <label for="LastName" class="col-sm-2 control-label">Last Name</label>
-        <div class="col-sm-10">
-            <input type="text" name="LastName" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="PhoneNumber" class="col-sm-2 control-label">Phone Number</label>
-        <div class="col-sm-10">
-            <input type="text" name="PhoneNumber" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="Email" class="col-sm-2 control-label">Email</label>
-        <div class="col-sm-10">
-            <input type="text" name="Email" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="Address" class="col-sm-2 control-label">Address</label>
-        <div class="col-sm-10">
-            <input type="text" name="Address" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="City" class="col-sm-2 control-label">City</label>
-        <div class="col-sm-10">
-            <input type="text" name="City" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="State" class="col-sm-2 control-label">State</label>
-        <div class="col-sm-10">
-            <select Name="State">
-                <option value="AL">Alabama</option>
-                <option value="AK">Alaska</option>
-                <option value="AZ">Arizona</option>
-                <option value="AR">Arkansas</option>
-                <option value="CA">California</option>
-                <option value="CO">Colorado</option>
-                <option value="CT">Connecticut</option>
-                <option value="DE">Delaware</option>
-                <option value="DC">District Of Columbia</option>
-                <option value="FL">Florida</option>
-                <option value="GA">Georgia</option>
-                <option value="HI">Hawaii</option>
-                <option value="ID">Idaho</option>
-                <option value="IL">Illinois</option>
-                <option value="IN">Indiana</option>
-                <option value="IA">Iowa</option>
-                <option value="KS">Kansas</option>
-                <option value="KY">Kentucky</option>
-                <option value="LA">Louisiana</option>
-                <option value="ME">Maine</option>
-                <option value="MD">Maryland</option>
-                <option value="MA">Massachusetts</option>
-                <option value="MI">Michigan</option>
-                <option value="MN">Minnesota</option>
-                <option value="MS">Mississippi</option>
-                <option value="MO">Missouri</option>
-                <option value="MT">Montana</option>
-                <option value="NE">Nebraska</option>
-                <option value="NV">Nevada</option>
-                <option value="NH">New Hampshire</option>
-                <option value="NJ">New Jersey</option>
-                <option value="NM">New Mexico</option>
-                <option value="NY">New York</option>
-                <option value="NC">North Carolina</option>
-                <option value="ND">North Dakota</option>
-                <option value="OH">Ohio</option>
-                <option value="OK">Oklahoma</option>
-                <option value="OR">Oregon</option>
-                <option value="PA">Pennsylvania</option>
-                <option value="RI">Rhode Island</option>
-                <option value="SC">South Carolina</option>
-                <option value="SD">South Dakota</option>
-                <option value="TN">Tennessee</option>
-                <option value="TX">Texas</option>
-                <option value="UT">Utah</option>
-                <option value="VT">Vermont</option>
-                <option value="VA">Virginia</option>
-                <option value="WA">Washington</option>
-                <option value="WV">West Virginia</option>
-                <option value="WI">Wisconsin</option>
-                <option value="WY">Wyoming</option>
-            </select>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="Zip" class="col-sm-2 control-label">Zip</label>
-        <div class="col-sm-10">
-            <input type="text" name="Zip" />
-        </div>
+
     </div>
 
-    <div class="form-group">
-        <div class="input-icon">
-            <i>$</i>
-            <input type="text" name="payment-amount" class="form-control" placeholder="0.00">
-        </div>
-    </div>
-	<div class="form-group">
-		<label for="iframesCardNumber">Card Number:</label>
-		<div class="iframeholder" id="iframesCardNumber"></div>
-	</div>
-	<div class="form-group">
-		<label for="iframesCardExpiration">Card Expiration:</label>
-		<div class="iframeholder" id="iframesCardExpiration"></div>
-	</div>
-	<div class="form-group">
-		<label for="iframesCardCvv">Card CVV:</label>
-		<div class="iframeholder" id="iframesCardCvv"></div>
-	</div>
+    <div id="payment-panels" class="payment-wrappers">
 
-    <p>
-        <button name="command" value="make-credit-payment" class="button"><?php _e('Charge Credit Card', 'heartland-management-terminal') ?></button>
-        <input type="hidden" name="token_value">
-    </p>
+        <div class="payment-panel">
+
+            <h1>2. Card Info</h1>
+
+            <label for="iframesCardNumber">Card Number:</label>
+            <div class="iframeholder" id="iframesCardNumber"></div>
+
+            <label for="iframesCardExpiration">Card Expiration:</label>
+            <div class="iframeholder" id="iframesCardExpiration"></div>
+
+            <label for="iframesCardCvv">Card CVV:</label>
+            <div class="iframeholder" id="iframesCardCvv"></div>
+
+        </div>
+
+    </div>
+
+    <div id="amount-panels" class="payment-wrappers">
+
+        <div class="payment-panel">
+
+            <h1>3. Payment Amount</h1>
+
+            <div class="field">
+                <div class="input-icon">
+                    <i>$</i>
+                    <input type="text" name="payment-amount" id="payment-amount" class="form-control" placeholder="0.00">
+                </div>
+            </div>
+
+            <button name="command" value="make-credit-payment" class="button" id="charge-card"><?php _e('Charge Credit Card', 'heartland-management-terminal') ?></button>
+            <input type="hidden" name="token_value">
+
+        </div>
+
+    </div>
+
+
+
 
 </form>
 

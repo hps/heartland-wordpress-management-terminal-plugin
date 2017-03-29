@@ -203,4 +203,116 @@
 		text-align: right;
 	}
 
+
+
+	/* PAYMENT PAGE */
+
+	.payment-wrappers{
+		float:left;
+		width:450px;
+		margin-right:45px;
+	}
+
+	.payment-panel {
+	    width: 450px;
+	    background: #fff;
+	    box-sizing: border-box;
+	    margin: 15px 0 30px 0;
+	    position: relative;
+	    box-shadow: 3px 3px 10px rgba(0,0,0,.1);
+	    padding:40px;
+	    float:left;
+	    border-left:10px solid #ccc;
+	}
+
+	.payment-panel label {
+	    display: block;
+	    font-size: 14px;
+	    font-weight: 100;
+	    margin-top: 10px;
+	    margin-bottom: 3px;
+	    color: #333;
+	}
+
+	.payment-panel input[type="text"],
+	.payment-panel select {
+	    box-sizing: border-box;
+	    display: block;
+	    width: 100%;
+	    height: 34px;
+	    padding: 6px 12px;
+	    font-size: 14px;
+	    line-height: 1.42857143;
+	    color: #555;
+	    background-color: #fff;
+	    background-image: none;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	}
+
+	.payment-panel input[type=text]:focus, 
+	.payment-panel input[type=tel]:focus,
+	.payment-panel select:focus {
+	    border-color: #66afe9;
+	    outline: 0;
+	    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+	    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+	}
+
+	.payment-panel h1{
+		margin-top:0px !important;
+		padding-top:0px !important;
+	}
+
+	input#payment-amount {
+	    padding: 0px 12px 0px 30px;
+	    font-size: 30px;
+	    line-height: 60px;
+	    height: 50px;
+	    border: 0px;
+	    box-shadow: none;
+	    margin: 0px;
+	    outline: none;
+	    font-weight: 300;
+	}
+
+	.payment-panel .input-icon > i {
+	    font-size: 30px;
+	    font-weight: 300;
+	}
+
+	.payment-panel button.button {
+	    position: absolute;
+	    display: inline-block;
+	    padding: 0 15px;
+	    color: #fff;
+	    background: #000;
+	    text-decoration: none;
+	    bottom: -20px;
+	    right: 30px;
+	    font-weight: 500;
+	    font-size: 16px;
+	    z-index: 2;
+	    box-shadow: 2px 2px 6px rgba(0,0,0,.4);
+	    transform: scale(1,1);
+	    transition: transform .3s ease;
+	    border: 0px;
+	    border-radius: 0px;
+	    line-height: 40px;
+	    height: auto;
+	}
+
+	.payment-panel button.button:hover,
+	.payment-panel button.button:active,
+	.payment-panel button.button:focus{
+		background: #000;
+		color:#fff;
+		transform:scale(1.1,1.1);
+	}
+
 </style>
