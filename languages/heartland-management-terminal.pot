@@ -1,0 +1,295 @@
+# Copyright (C) 2017 Heartland Management Terminal
+# This file is distributed under the same license as the Heartland Management Terminal package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Heartland Management Terminal 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/heartland-"
+"management-terminal\n"
+"POT-Creation-Date: 2017-03-03 18:21:10+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: classes/admin/class-submenu.php:69
+msgid "API Keys"
+msgstr ""
+
+#: classes/admin/class-submenu.php:78
+msgid "Public API Key"
+msgstr ""
+
+#: classes/admin/class-submenu.php:92
+msgid "Secret API Key"
+msgstr ""
+
+#: classes/admin/class-submenu.php:107
+msgid "List Transactions Settings"
+msgstr ""
+
+#: classes/admin/class-submenu.php:116
+msgid "Number of Days"
+msgstr ""
+
+#: classes/admin/class-submenu.php:123
+msgid ""
+"The last \"X\" days to include for the \"List Transactions\" section. "
+"Default is \"10\" days."
+msgstr ""
+
+#: classes/admin/class-submenu.php:133
+msgid "Number of Transactions per Page"
+msgstr ""
+
+#: classes/admin/class-submenu.php:140
+msgid ""
+"The number of transactions to display at once. Default is \"10\" "
+"transactions per page."
+msgstr ""
+
+#: classes/admin/class-submenu.php:150
+msgid "Cache Timeout"
+msgstr ""
+
+#: classes/admin/class-submenu.php:157
+msgid "Value should be in seconds. Default is \"1800\" (30 minutes)."
+msgstr ""
+
+#: classes/admin/class-submenu.php:237
+msgid "Dashboard"
+msgstr ""
+
+#: classes/admin/class-submenu.php:238
+msgid "Heartland"
+msgstr ""
+
+#: classes/admin/class-submenu.php:247
+msgid "Transactions"
+msgstr ""
+
+#: classes/admin/class-submenu.php:248
+msgid "List Transactions"
+msgstr ""
+
+#: classes/admin/class-submenu.php:256 classes/admin/class-submenu.php:257
+msgid "Options"
+msgstr ""
+
+#: classes/admin/class-submenu.php:309
+msgid "Transaction update succeeded."
+msgstr ""
+
+#: classes/admin/class-submenu.php:314
+msgid "Transaction update failed. %s"
+msgstr ""
+
+#: classes/admin/class-submenu.php:522
+msgid "Heartland Payment Systems - Manage Transaction"
+msgstr ""
+
+#: classes/admin/class-submenu.php:561 classes/admin/class-submenu.php:577
+msgid "Transaction cannot be managed at this time."
+msgstr ""
+
+#: classes/admin/class-submenu.php:664
+msgid "Active"
+msgstr ""
+
+#: classes/admin/class-submenu.php:667
+msgid "Inactive"
+msgstr ""
+
+#: classes/admin/class-submenu.php:670
+msgid "Cleared"
+msgstr ""
+
+#: classes/admin/class-submenu.php:673
+msgid "Voided"
+msgstr ""
+
+#: classes/admin/class-submenu.php:676
+msgid "Autovoided"
+msgstr ""
+
+#: classes/admin/class-submenu.php:679
+msgid "Reversed"
+msgstr ""
+
+#: classes/admin/class-submenu.php:682
+msgid "Timed-Out"
+msgstr ""
+
+#: templates/admin/list-transactions.php:3
+msgid "Filter transaction list"
+msgstr ""
+
+#: templates/admin/list-transactions.php:8
+msgid "All"
+msgstr ""
+
+#: templates/admin/list-transactions.php:17
+#: templates/admin/list-transactions.php:19
+msgid "Goto Transaction"
+msgstr ""
+
+#: templates/admin/list-transactions.php:18
+#: templates/admin/manage-transaction.php:71
+msgid "Transaction ID"
+msgstr ""
+
+#: templates/admin/list-transactions.php:26
+msgid "ID"
+msgstr ""
+
+#: templates/admin/list-transactions.php:27
+msgid "Date"
+msgstr ""
+
+#: templates/admin/list-transactions.php:28
+msgid "Amount"
+msgstr ""
+
+#: templates/admin/list-transactions.php:29
+msgid "Settled"
+msgstr ""
+
+#: templates/admin/list-transactions.php:30
+#: templates/admin/manage-transaction.php:79
+msgid "Type"
+msgstr ""
+
+#: templates/admin/list-transactions.php:31
+msgid "Reponse"
+msgstr ""
+
+#: templates/admin/list-transactions.php:47
+msgid "Manage"
+msgstr ""
+
+#: templates/admin/list-transactions.php:66
+msgid "&laquo;"
+msgstr ""
+
+#: templates/admin/list-transactions.php:67
+msgid "&raquo;"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:28
+msgid "Error fetching transaction details for transaction"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:67
+msgid "Information"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:75
+msgid "Status"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:83
+msgid "Gateway Response"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:97
+msgid "Issuer/Processor Response"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:115
+msgid "Actions"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:120
+#: templates/admin/manage-transaction.php:121
+msgid "Void"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:126
+#: templates/admin/manage-transaction.php:136
+msgid "Refund"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:128
+msgid "Transaction amount"
+msgstr ""
+
+#: templates/admin/manage-transaction.php:132
+msgid "Refund amount"
+msgstr ""
+
+#: templates/admin/root.php:5
+msgid ""
+"This management terminal exposes limited functionality to manage "
+"transactions through your WordPress installation."
+msgstr ""
+
+#: templates/admin/root.php:6
+msgid ""
+"Current functionality may not be a one-to-one match for Portico Virtual "
+"Terminal."
+msgstr ""
+
+#: templates/admin/root.php:18
+msgid "WooCommerce SecureSubmit Gateway"
+msgstr ""
+
+#: templates/admin/root.php:21
+msgid "Accept payments with Secure Submit and WooCommerce"
+msgstr ""
+
+#: templates/admin/root.php:27 templates/admin/root.php:47
+#: templates/admin/root.php:67 templates/admin/root.php:87
+msgid "Install Plugin"
+msgstr ""
+
+#: templates/admin/root.php:38
+msgid "WP SecureSubmit"
+msgstr ""
+
+#: templates/admin/root.php:41
+msgid "Create simple forms with WP SecureSubmit to take payments"
+msgstr ""
+
+#: templates/admin/root.php:58
+msgid "Heartland Secure Submit Addon for Gravity Forms"
+msgstr ""
+
+#: templates/admin/root.php:61
+msgid "Leverage Gravity Forms to create forms and accept payments"
+msgstr ""
+
+#: templates/admin/root.php:78
+msgid "Events Manager Pro SecureSubmit Gateway"
+msgstr ""
+
+#: templates/admin/root.php:81
+msgid "Accept payments with Secure Submit and Events Manager Pro"
+msgstr ""
+
+#: templates/admin/root.php:95
+msgid "Contact Heartland Payment Systems Support"
+msgstr ""
+
+#: templates/admin/root.php:97
+msgid "Please contact support with any questions or issues you have."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Heartland Management Terminal"
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (Heartland Management Terminal 1.0.0)  #-#-#-#-#
+#. Plugin URI of the plugin/theme
+#. #-#-#-#-#  plugin.pot (Heartland Management Terminal 1.0.0)  #-#-#-#-#
+#. Author URI of the plugin/theme
+msgid "https://developer.heartlandpaymentsystems.com/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "View and Manage your Heartland transactions."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Heartland Payment Systems"
+msgstr ""
