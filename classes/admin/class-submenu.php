@@ -307,8 +307,8 @@ class HeartlandTerminal_Submenu
      */
     public function adminHeartlandPayments()
     {
-        $action = isset($_GET['action']) ? $_GET['action'] : '';
-        $command = isset($_GET['command']) ? $_GET['command'] : '';
+        $action = isset($_POST['action']) ? $_POST['action'] : '';
+        $command = isset($_POST['command']) ? $_POST['command'] : '';
 
         if (!empty($action) && !empty($command)) {
             try {
@@ -624,8 +624,8 @@ class HeartlandTerminal_Submenu
             $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
 
             return $service->charge()
-                ->withAmount($_GET['payment-amount'])
-                ->withToken($_GET['token_value'])
+                ->withAmount($_POST['payment-amount'])
+                ->withToken($_POST['token_value'])
                 ->withCardHolder($this->getCardHolder())
                 ->execute();
         }

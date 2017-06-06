@@ -2,7 +2,7 @@
 
 <?php do_action('admin_notices'); ?>
 
-<form id="iframes" method="get" action="<?php echo $page ?>">
+<form id="iframes" method="post" action="<?php echo $page ?>">
 
     <input type="hidden" name="page" value="heartland-payments">
     <input type="hidden" name="action" value="charge">
@@ -143,7 +143,8 @@
                 </div>
             </div>
 
-            <button name="command" value="make-credit-payment" class="button" id="charge-card"><?php _e('Charge Credit Card', 'heartland-management-terminal') ?></button>
+            <div id="iframesPaymentButton"></div>
+
             <input type="hidden" name="token_value">
 
         </div>
@@ -173,6 +174,9 @@
         cardCvv: {
           target:      'iframesCardCvv',
           placeholder: 'CVV'
+        },
+        submit: {
+            target: 'iframesPaymentButton'
         }
       },
       style: {
