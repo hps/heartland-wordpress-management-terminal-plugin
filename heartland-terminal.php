@@ -1,14 +1,14 @@
 <?php
 /**
  * @link              https://developer.heartlandpaymentsystems.com/
- * @since             1.0.0
+ * @since             1.1.0
  * @package           HeartlandTerminal
  *
  * @wordpress-plugin
  * Plugin Name:       Heartland Management Terminal
  * Plugin URI:        https://developer.heartlandpaymentsystems.com/
  * Description:       View and Manage your Heartland transactions.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            Heartland Payment Systems
  * Author URI:        https://developer.heartlandpaymentsystems.com/
  * License:           GPL-2.0+
