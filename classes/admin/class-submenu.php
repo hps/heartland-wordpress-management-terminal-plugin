@@ -253,7 +253,7 @@ class HeartlandTerminal_Submenu
 
         add_submenu_page(
             __FILE__,
-            __('Take Card Payment', 'heartland-management-terminal'),
+            __('Take a Card Payment', 'heartland-management-terminal'),
             __('Take Card Payment', 'heartland-management-terminal'),
             'administrator',
             'heartland-payments',
@@ -262,11 +262,11 @@ class HeartlandTerminal_Submenu
 
         add_submenu_page(
             __FILE__,
-            __('Take Check Payment', 'heartland-management-terminal'),
+            __('Take a Check Payment', 'heartland-management-terminal'),
             __('Take Check Payment', 'heartland-management-terminal'),
             'administrator',
-            'heartland-payments',
-            array($this, 'adminHeartlandPayments')
+            'heartland-payments-check',
+            array($this, 'adminHeartlandPaymentsCheck')
         );
 
         add_submenu_page(
@@ -340,6 +340,36 @@ class HeartlandTerminal_Submenu
         include_once plugin_dir_path(__FILE__)
             . '../../templates/admin/payments.php';
     }
+
+    /**
+     * Entrypoint for the payments check page
+     */
+     public function adminHeartlandPaymentsCheck()
+     {
+         $action = isset($_POST['action']) ? $_POST['action'] : '';
+         $command = isset($_POST['command']) ? $_POST['command'] : '';
+ 
+         if (!empty($action) && !empty($command)) {
+             try {
+                 $this->processActionCommand(null, $action, $command);
+                 $this->addNotice(
+                     __('The payment was successful.', 'heartland-management-terminal'),
+                     'notice-success'
+                 );
+ 
+                 // clear report cache
+                 delete_transient(get_transient($this->code . '_data'));
+             } catch (HpsException $e) {
+                 $this->addNotice(
+                     sprintf(__('The payment has failed. %s', 'heartland-management-terminal'), $e->getMessage()),
+                     'notice-error'
+                 );
+             }
+         }
+ 
+         include_once plugin_dir_path(__FILE__)
+             . '../../templates/admin/payments-check.php';
+     }
 
     /**
      * Entrypoint for the list and manage pages
