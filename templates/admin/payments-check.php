@@ -5,8 +5,8 @@
 <form id="iframes" method="post" action="<?php echo $page ?>">
 
     <input type="hidden" name="page" value="heartland-payments">
-    <input type="hidden" name="action" value="charge">
-    <input type="hidden" name="command" value="make-credit-payment">
+    <input type="hidden" name="action" value="charge-check">
+    <input type="hidden" name="command" value="make-check-payment">
 
     <div id="customer-panels" class="payment-wrappers">
 

@@ -658,7 +658,7 @@ class HeartlandTerminal_Submenu
      */
     protected function processActionCommand($id, $action, $command)
     {
-        // charge
+        // charge card
         if ($action === 'charge' && $command === 'make-credit-payment') {
             $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
 
@@ -668,6 +668,13 @@ class HeartlandTerminal_Submenu
                 ->withCardHolder($this->getCardHolder())
                 ->execute();
         }
+
+            // charge check
+            if ($action === 'charge-check' && $command === 'make-check-payment') {
+                // check service new up here
+    
+                // check service charge here
+            }
 
         $transaction =
             (new HpsFluentCreditService($this->getHeartlandConfiguration()))
