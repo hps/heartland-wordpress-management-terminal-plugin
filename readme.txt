@@ -32,6 +32,9 @@ Features of Heartland Management Terminal:
 
 == Changelog ==
 
+= 1.1.1 =
+* Added ability to process eChecks cards
+
 = 1.1.0 =
 * Added ability to process credit cards
 
