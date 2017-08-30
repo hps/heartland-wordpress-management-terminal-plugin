@@ -253,8 +253,17 @@ class HeartlandTerminal_Submenu
 
         add_submenu_page(
             __FILE__,
-            __('Take a Payment', 'heartland-management-terminal'),
-            __('Take a Payment', 'heartland-management-terminal'),
+            __('Take Card Payment', 'heartland-management-terminal'),
+            __('Take Card Payment', 'heartland-management-terminal'),
+            'administrator',
+            'heartland-payments',
+            array($this, 'adminHeartlandPayments')
+        );
+
+        add_submenu_page(
+            __FILE__,
+            __('Take Check Payment', 'heartland-management-terminal'),
+            __('Take Check Payment', 'heartland-management-terminal'),
             'administrator',
             'heartland-payments',
             array($this, 'adminHeartlandPayments')
