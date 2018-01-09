@@ -160,7 +160,7 @@
 <script type="text/javascript">
   (function (document, Heartland) {
     var hps = new Heartland.HPS({
-      publicKey: 'pkapi_cert_jKc1FtuyAydZhZfbB3',
+      publicKey: '<?php echo $this->getSetting('public_api_key'); ?>',
       type:      'iframe',
       fields: {
         cardNumber: {
