@@ -32,6 +32,9 @@ Features of Heartland Management Terminal:
 
 == Changelog ==
 
+= 1.1.1 = 
+* Fixed hard-coded public API key on payments page
+
 = 1.1.0 =
 * Added ability to process credit cards
 
