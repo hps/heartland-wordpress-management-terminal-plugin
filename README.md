@@ -8,20 +8,20 @@ This plugin allows merchants to manage transactions.
 
 Features of Heartland Management Terminal:
 
-- List transactions
-- Manage transaction by:
-    - void
-    - refund
+* List transactions
+* Manage transaction by:
+  * void
+  * refund
 
 ## Installation
 
-  1. Sign Up for an account @ developer.heartlandpaymentsystems.com if you haven't already
-  2. Download Gravity Forms
-  3. Install and activate Heartland Management Terminal plugin (see below sections)
-  4. Configure Heartland Management Terminal plugin under the Heartland > Options page:
-      - Navigate to Settings to enter your API Keys provided by your Heartland Developer Portal Account
+1. Sign Up for an account @ developer.heartlandpaymentsystems.com if you haven't already
+2. Download Gravity Forms
+3. Install and activate Heartland Management Terminal plugin (see below sections)
+4. Configure Heartland Management Terminal plugin under the Heartland > Options page:
+   * Navigate to Settings to enter your API Keys provided by your Heartland Developer Portal Account
 
-NEED ADDITIONAL HELP? Contact Us  http://developer.heartlandpaymentsystems.com/support
+NEED ADDITIONAL HELP? Contact Us http://developer.heartlandpaymentsystems.com/support
 
 ### Using The WordPress Dashboard
 
@@ -39,6 +39,14 @@ NEED ADDITIONAL HELP? Contact Us  http://developer.heartlandpaymentsystems.com/s
 
 ## Changelog
 
+### 1.1.1
+
+* Fixed hard-coded public API key on payments page
+
+### 1.1.0
+
+* Added ability to process credit cards
+
 ### 1.0.0
 
-- Initial Release
+* Initial Release
