@@ -51,8 +51,10 @@ class HeartlandTerminal_Submenu
         include_once plugin_dir_path(__FILE__) . '../includes/Hps.php';
 
         // roles
-        $role = get_role('administrator');
-        $role->add_cap('manage_heartland');
+        if (!current_user_can('manage_heartland')) {
+            $role = get_role('administrator');
+            $role->add_cap('manage_heartland');
+        }
 
         // hooks
         add_action('admin_menu', array($this, 'addAdminMenuPage'));
