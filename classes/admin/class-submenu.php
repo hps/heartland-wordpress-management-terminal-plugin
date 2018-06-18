@@ -50,6 +50,10 @@ class HeartlandTerminal_Submenu
         // includes
         include_once plugin_dir_path(__FILE__) . '../includes/Hps.php';
 
+        // roles
+        $role = get_role('administrator');
+        $role->add_cap('manage_heartland');
+
         // hooks
         add_action('admin_menu', array($this, 'addAdminMenuPage'));
         add_action('admin_init', array($this, 'settingsInit'));
@@ -236,7 +240,7 @@ class HeartlandTerminal_Submenu
         add_menu_page(
             __('Dashboard', 'heartland-management-terminal'),
             __('Heartland', 'heartland-management-terminal'),
-            'administrator',
+            'manage_heartland',
             __FILE__,
             array($this, 'adminHeartlandRoot'),
             plugins_url('/templates/admin/assets/faviconpng.png', dirname(dirname(__FILE__)))
@@ -246,7 +250,7 @@ class HeartlandTerminal_Submenu
             __FILE__,
             __('Transactions', 'heartland-management-terminal'),
             __('List Transactions', 'heartland-management-terminal'),
-            'administrator',
+            'manage_heartland',
             'heartland-transactions',
             array($this, 'adminHeartlandTransactions')
         );
@@ -255,7 +259,7 @@ class HeartlandTerminal_Submenu
             __FILE__,
             __('Take a Payment', 'heartland-management-terminal'),
             __('Take a Payment', 'heartland-management-terminal'),
-            'administrator',
+            'manage_heartland',
             'heartland-payments',
             array($this, 'adminHeartlandPayments')
         );
@@ -264,7 +268,7 @@ class HeartlandTerminal_Submenu
             __FILE__,
             __('Options', 'heartland-management-terminal'),
             __('Options', 'heartland-management-terminal'),
-            'administrator',
+            'manage_heartland',
             'heartland-options',
             array($this, 'adminHeartlandOptions')
         );

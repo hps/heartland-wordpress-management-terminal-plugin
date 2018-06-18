@@ -39,6 +39,10 @@ NEED ADDITIONAL HELP? Contact Us http://developer.heartlandpaymentsystems.com/su
 
 ## Changelog
 
+### 1.1.2
+
+* Added permission to control plugin visibility
+
 ### 1.1.1
 
 * Fixed hard-coded public API key on payments page

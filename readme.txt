@@ -32,6 +32,9 @@ Features of Heartland Management Terminal:
 
 == Changelog ==
 
+= 1.1.2 = 
+* Added permission to control plugin visibility
+
 = 1.1.1 = 
 * Fixed hard-coded public API key on payments page
 
