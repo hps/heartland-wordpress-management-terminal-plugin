@@ -1,7 +1,7 @@
 === Heartland Management Terminal ===
 Contributors: markhagan
 Tags: heartland, payment, systems, gateway, token, tokenize, securesubmit.
-Tested up to: 4.5.1
+Tested up to: 5.2
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
