@@ -32,6 +32,10 @@ Features of Heartland Management Terminal:
 
 == Changelog ==
 
+= 1.2.0 =
+* Created custom role capabilities to fine tune page access
+* Added ability to override role capabilities via WordPress filters
+
 = 1.1.1 = 
 * Fixed hard-coded public API key on payments page
 
