@@ -15,6 +15,11 @@
  */
 class HeartlandTerminal_Submenu
 {
+    const CAPABILITY_VIEW_MENU = 'heartland_terminal_view_menu';
+    const CAPABILITY_LIST_TRANSACTIONS = 'heartland_terminal_list_transactions';
+    const CAPABILITY_TAKE_PAYMENT = 'heartland_terminal_take_payment';
+    const CAPABILITY_SET_OPTIONS = 'heartland_terminal_set_options';
+
     /**
      * Plugin code
      *
@@ -161,6 +166,20 @@ class HeartlandTerminal_Submenu
                 'default' => '',
             )
         );
+
+        // register capabilities
+        $admin = get_role('administrator');
+        $capabilities = array(
+            static::CAPABILITY_VIEW_MENU,
+            static::CAPABILITY_LIST_TRANSACTIONS,
+            static::CAPABILITY_TAKE_PAYMENT,
+            static::CAPABILITY_SET_OPTIONS,
+        );
+        foreach ($capabilities as $capability) {
+            if (!$admin->has_cap($capability)) {
+                $admin->add_cap($capability);
+            }
+        }
     }
 
     /**
@@ -236,7 +255,14 @@ class HeartlandTerminal_Submenu
         add_menu_page(
             __('Dashboard', 'heartland-management-terminal'),
             __('Heartland', 'heartland-management-terminal'),
-            'administrator',
+            /**
+             * Limits accessing the plugin menu based on a user capability
+             *
+             * Default value is 'heartland_terminal_view_menu'.
+             *
+             * @param string $capability
+             */
+            apply_filters($this->code . '_view_menu_capability', static::CAPABILITY_VIEW_MENU),
             __FILE__,
             array($this, 'adminHeartlandRoot'),
             plugins_url('/templates/admin/assets/faviconpng.png', dirname(dirname(__FILE__)))
@@ -246,7 +272,14 @@ class HeartlandTerminal_Submenu
             __FILE__,
             __('Transactions', 'heartland-management-terminal'),
             __('List Transactions', 'heartland-management-terminal'),
-            'administrator',
+            /**
+             * Limits accessing the list transactions page based on a user capability
+             *
+             * Default value is 'heartland_terminal_list_transactions'.
+             *
+             * @param string $capability
+             */
+            apply_filters($this->code . '_list_transactions_capability', static::CAPABILITY_LIST_TRANSACTIONS),
             'heartland-transactions',
             array($this, 'adminHeartlandTransactions')
         );
@@ -255,7 +288,14 @@ class HeartlandTerminal_Submenu
             __FILE__,
             __('Take a Payment', 'heartland-management-terminal'),
             __('Take a Payment', 'heartland-management-terminal'),
-            'administrator',
+            /**
+             * Limits accessing the take payment page based on a user capability
+             *
+             * Default value is 'heartland_terminal_take_payment'.
+             *
+             * @param string $capability
+             */
+            apply_filters($this->code . '_take_payment_capability', static::CAPABILITY_TAKE_PAYMENT),
             'heartland-payments',
             array($this, 'adminHeartlandPayments')
         );
@@ -264,7 +304,14 @@ class HeartlandTerminal_Submenu
             __FILE__,
             __('Options', 'heartland-management-terminal'),
             __('Options', 'heartland-management-terminal'),
-            'administrator',
+            /**
+             * Limits accessing the set options page based on a user capability
+             *
+             * Default value is 'heartland_terminal_set_options'.
+             *
+             * @param string $capability
+             */
+            apply_filters($this->code . '_set_options_capability', static::CAPABILITY_SET_OPTIONS),
             'heartland-options',
             array($this, 'adminHeartlandOptions')
         );
@@ -284,20 +331,6 @@ class HeartlandTerminal_Submenu
      */
     public function adminHeartlandOptions()
     {
-        /**
-         * Limits accessing the options page based on a user capability
-         *
-         * Default value is 'manage_options'.
-         *
-         * @param string $capability
-         */
-        $capability = apply_filters($this->code . '_options_user_capability', 'manage_options');
-
-        // check user capabilities
-        if (!current_user_can($capability)) {
-            return;
-        }
-
         include_once plugin_dir_path(__FILE__)
             . '../../templates/admin/options.php';
     }
