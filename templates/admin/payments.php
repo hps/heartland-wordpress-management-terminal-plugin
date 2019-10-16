@@ -45,9 +45,9 @@
             </div>
 
             <div class="field">
-                <label for="State" class="col-sm-2 control-label">State:</label>
+                <label for="State" class="col-sm-2 control-label">State / Province:</label>
                 <select Name="State" id="State">
-                    <option value="">Pick a State</option>
+                    <option value="">Pick a State / Province</option>
                     <option value="AL">Alabama</option>
                     <option value="AK">Alaska</option>
                     <option value="AZ">Arizona</option>
@@ -99,11 +99,24 @@
                     <option value="WV">West Virginia</option>
                     <option value="WI">Wisconsin</option>
                     <option value="WY">Wyoming</option>
+                    <option value="AB">Alberta</option>
+                    <option value="BC">British Columbia</option>
+                    <option value="MB">Manitoba</option>
+                    <option value="NB">New Brunswick</option>
+                    <option value="NL">Newfoundland and Labrador</option>
+                    <option value="NT">Northwest Territories</option>
+                    <option value="NS">Nova Scotia</option>
+                    <option value="NU">Nunavut</option>
+                    <option value="ON">Ontario</option>
+                    <option value="PE">Prince Edward Island</option>
+                    <option value="QC">Quebec</option>
+                    <option value="SK">Saskatchewan</option>
+                    <option value="YT">Yukon</option>
                 </select>
             </div>
 
             <div class="field">
-                <label for="Zip" class="col-sm-2 control-label">Zip:</label>
+                <label for="Zip" class="col-sm-2 control-label">Zip / Postal Code:</label>
                 <input type="text" id="Zip" name="Zip" />
             </div>
 
