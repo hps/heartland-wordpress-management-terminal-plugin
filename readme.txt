@@ -32,6 +32,9 @@ Features of Heartland Management Terminal:
 
 == Changelog ==
 
+= 1.3.0 =
+* Updated 'Take a Payment' page to support Canadian provinces and postal codes
+
 = 1.2.0 =
 * Created custom role capabilities to fine tune page access
 * Added ability to override role capabilities via WordPress filters
