@@ -13,6 +13,21 @@
  *
  * @package Custom_Admin_Settings
  */
+use GlobalPayments\Api\Entities\EncryptionData;
+use GlobalPayments\Api\PaymentMethods\CreditCardData;
+use GlobalPayments\Api\PaymentMethods\CreditTrackData;
+use GlobalPayments\Api\Services\CreditService;
+use GlobalPayments\Api\ServicesConfig;
+use GlobalPayments\Api\ServicesContainer;
+use GlobalPayments\Api\Entities\Address;
+use GlobalPayments\Api\Entities\Customer;
+use GlobalPayments\Api\Services\ReportingService;
+use GlobalPayments\Api\Entities\Reporting\TransactionSummary;
+use GlobalPayments\Api\Entities\Transaction;
+use GlobalPayments\Api\PaymentMethods\GiftCard;
+use GlobalPayments\Api\PaymentMethods\ECheck;
+use GlobalPayments\Api\Entities\Exceptions;
+
 class HeartlandTerminal_Submenu
 {
     const CAPABILITY_VIEW_MENU = 'heartland_terminal_view_menu';
@@ -53,7 +68,7 @@ class HeartlandTerminal_Submenu
     public function init()
     {
         // includes
-        include_once plugin_dir_path(__FILE__) . '../includes/Hps.php';
+        include_once plugin_dir_path(__FILE__) . '../includes/vendor/autoload.php';
 
         // hooks
         add_action('admin_menu', array($this, 'addAdminMenuPage'));
@@ -353,7 +368,7 @@ class HeartlandTerminal_Submenu
 
                 // clear report cache
                 delete_transient(get_transient($this->code . '_data'));
-            } catch (HpsException $e) {
+            } catch (Exceptions $e) {
                 $this->addNotice(
                     sprintf(__('The payment has failed. %s', 'heartland-management-terminal'), $e->getMessage()),
                     'notice-error'
@@ -384,7 +399,7 @@ class HeartlandTerminal_Submenu
 
                 // clear report cache
                 delete_transient(get_transient($this->code . '_data'));
-            } catch (HpsException $e) {
+            } catch (Exceptions $e) {
                 $this->addNotice(
                     sprintf(__('Transaction update failed. %s', 'heartland-management-terminal'), $e->getMessage()),
                     'notice-error'
@@ -460,11 +475,10 @@ class HeartlandTerminal_Submenu
      */
     protected function getHeartlandConfiguration()
     {
-        $config = new HpsServicesConfig();
+        $config = new ServicesConfig();
         $config->secretApiKey = $this->getSetting('secret_api_key');
-        $config->versionNumber = '1510';
-        $config->developerId = '002914';
-        return $config;
+        $config->serviceUrl = "https://cert.api2.heartlandportico.com";  
+        return $config;  
     }
     /**
      * Gets transaction report data
@@ -480,19 +494,22 @@ class HeartlandTerminal_Submenu
     {
         $items = get_transient($this->code . '_data');
 
-        if (false !== $items) {
+        if (is_object(json_decode($items))) {
             return json_decode($items);
         }
-
+        $service = new ReportingService();
+        ServicesContainer::configure($this->getHeartlandConfiguration());
         $defaultTZ = date_default_timezone_get();
         date_default_timezone_set('UTC');
-        $service = new HpsCreditService($this->getHeartlandConfiguration());
         $dateFormat = 'Y-m-d\TH:i:s.00\Z';
         $dateMinus10 = new DateTime();
         $dateMinus10->sub(new DateInterval(sprintf('P%sD', $this->getSetting('report_date_interval', '10'))));
         $current = new DateTime();
+        $items = $service->findTransactions()
+            ->withStartDate($dateMinus10->format($dateFormat))
+            ->withEndDate($current->format($dateFormat))
+            ->execute();
 
-        $items = $service->listTransactions($dateMinus10->format($dateFormat), $current->format($dateFormat));
         $filteredItems = $this->filterTransactions($items);
 
         if (!defined('HOUR_IN_SECONDS')) {
@@ -528,16 +545,16 @@ class HeartlandTerminal_Submenu
      *
      * @return false|HpsGatewayServiceInterface
      */
-    protected function getServiceForTransaction(HpsReportTransactionDetails $transaction)
+    protected function getServiceForTransaction(TransactionSummary $transaction)
     {
+//        print_r($transaction->paymentMehtodType); exit;
         $service = false;
-
         if (substr($transaction->serviceName, 0, 6) === 'Credit') {
-            $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
+            $service = new CreditService($this->getHeartlandConfiguration());
         } elseif (substr($transaction->serviceName, 0, 5) === 'Check') {
-            $service = new HpsFluentCheckService($this->getHeartlandConfiguration());
+            $service = new ECheck($this->getHeartlandConfiguration());
         } elseif (substr($transaction->serviceName, 0, 8) === 'GiftCard') {
-            $service = new HpsFluentGiftCardService($this->getHeartlandConfiguration());
+            $service = new GiftCard($this->getHeartlandConfiguration());
         }
 
         return $service;
@@ -555,7 +572,7 @@ class HeartlandTerminal_Submenu
             return $item;
         }
 
-        if (!empty($item->exceptions->hpsException)) {
+        if (!empty($item->exceptions->Exceptions)) {
             $item->exceptions->hpsException = (object)array(
                 'code' => $item->exceptions->hpsException->getCode(),
                 'message' => $item->exceptions->hpsException->getMessage(),
@@ -593,13 +610,14 @@ class HeartlandTerminal_Submenu
      */
     protected function performManageAction($transactionId)
     {
-        $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
+        $service = new ReportingService();
+        ServicesContainer::configure($this->getHeartlandConfiguration());
         $title = __('Heartland Payment Systems - Manage Transaction', 'heartland-management-terminal');
         $transaction = null;
 
         try {
-            $transaction = $service->get($transactionId)->execute();
-        } catch (HpsException $e) {
+            $transaction = $service->transactionDetail($transactionId)->execute();
+        } catch (Exceptions $e) {
             $transaction = false;
         }
 
@@ -610,18 +628,11 @@ class HeartlandTerminal_Submenu
     /**
      * Creates the HpsCardHolder object for charging a credit card
      */
-    protected function getCardHolder() {
-        $cardHolder = new HpsCardHolder();
-
-        $cardHolder->address = $_GET['Address'];
-        $cardHolder->city = $_GET['City'];
-        $cardHolder->state = $_GET['State'];
-        $cardHolder->zip = $_GET['Zip'];
-        $cardHolder->email = $_GET['Email'];
-        $cardHolder->phone = $_GET['PhoneNumber'];
-
-        $cardHolder->address = $this->getAddress();
-
+    private function getCardHolder() {
+        $cardHolder = new CreditCardData();
+        
+        $cardHolder->cardHolderName = $_POST['FirstName'].' '.$_POST['LastName'];
+        $cardHolder->token = $_POST['token_value'];
         return $cardHolder;
     }
 
@@ -629,10 +640,14 @@ class HeartlandTerminal_Submenu
      * Creates the HpsAddress object for a given HpsCardHolder
      */
     protected function getAddress() {
-        $cardHolderAddress = new HpsAddress();
+        $cardHolderAddress = new Address();
 
-        $cardHolderAddress->firstName = $_GET['FirstName'];
-        $cardHolderAddress->lastName = $_GET['LastName'];
+        $cardHolderAddress->streetAddress1 = $_POST['Address'];
+        $cardHolderAddress->city = $_POST['City'];
+        $cardHolderAddress->state = $_POST['State'];
+        $cardHolderAddress->postalCode = $_POST['Zip'];
+        
+        return $cardHolderAddress;
     }
 
     /**
@@ -654,20 +669,18 @@ class HeartlandTerminal_Submenu
     {
         // charge
         if ($action === 'charge' && $command === 'make-credit-payment') {
-            $service = new HpsFluentCreditService($this->getHeartlandConfiguration());
-
-            return $service->charge()
-                ->withAmount($_POST['payment-amount'])
-                ->withToken($_POST['token_value'])
-                ->withCardHolder($this->getCardHolder())
+            ServicesContainer::configure($this->getHeartlandConfiguration());
+            $hpstoken = $this->getCardHolder();
+            return $hpstoken->charge($_POST['payment-amount'])
+                ->withCurrency('USD')
+                ->withAddress($this->getAddress())
+                ->withAllowDuplicates(true)
                 ->execute();
         }
-
-        $transaction =
-            (new HpsFluentCreditService($this->getHeartlandConfiguration()))
-                ->get($id)
-                ->execute();
-
+        
+        $reportService = new ReportingService();
+        ServicesContainer::configure($this->getHeartlandConfiguration());
+        $transaction = $reportService->transactionDetail($id)->execute();
         $service = $this->getServiceForTransaction($transaction);
 
         if (false === $service) {
@@ -675,23 +688,21 @@ class HeartlandTerminal_Submenu
                 __('Transaction cannot be managed at this time.', 'heartland-management-terminal')
             );
         }
-
         // void
         if ($action === 'manage' && $command === 'void-transaction') {
-            return $service->void()
-                ->withTransactionId($id)
-                ->execute();
+            
+            return Transaction::fromId($id)->void()->execute();
         }
 
         // exit early if a refund isn't possible
         if ($action === 'manage' && $command !== 'refund-transaction'
-            || $service instanceof HpsFluentCheckService
+            || $service instanceof ECheck
         ) {
             throw new Exception(
                 __('Transaction cannot be managed at this time.', 'heartland-management-terminal')
             );
         }
-
+        
         // refund
         $amount = !empty($transaction->settlementAmount)
             ? $transaction->settlementAmount
@@ -701,36 +712,21 @@ class HeartlandTerminal_Submenu
             : false;
 
         $builder = null;
-
         // transaction needs to be active (not in closed batch) to reverse.
         // gift service method for refund is reverse.
         if ($transaction->transactionStatus === 'A'
-            || $service instanceof HpsFluentGiftCardService
+            || $service instanceof GiftCard
         ) {
-            $builder = $service->reverse();
+            $builder = Transaction::fromId($transaction->transactionId)
+                    ->reverse($transaction->amount)
+                    ->execute();
         } else {
-            $builder = $service->refund();
-        }
-
-        $builder = $builder
-            ->withTransactionId($id)
-            ->withCurrency('usd');
-
-        // only credit service has a reverse capable of changing the authorized amount
-        // that requires the original auth amount
-        if ($builder instanceof HpsCreditServiceReverseBuilder) {
-            $builder = $builder
-                ->withAmount($transaction->authorizedAmount)
-                ->withAuthAmount(
-                    $refundAmount !== false ? ($amount - $refundAmount) : null
-                );
-        } else {
-            $builder = $builder->withAmount(
-                $refundAmount !== false ? $refundAmount : $amount
-            );
-        }
-
-        return $builder->execute();
+            $builder = Transaction::fromId($transaction->transactionId)
+                    ->refund($refundAmount !== false ? $refundAmount : $amount)
+                    ->withCurrency('usd')
+                    ->execute();
+        }       
+        return $builder;            
     }
 
     /**
@@ -740,11 +736,11 @@ class HeartlandTerminal_Submenu
      *
      * @return bool
      */
-    protected function transactionCanRefund(HpsReportTransactionDetails $transaction)
+    protected function transactionCanRefund(TransactionSummary  $transaction)
     {
         $service = $this->getServiceForTransaction($transaction);
         return $service !== false
-            && !($service instanceof HpsFluentCheckService)
+            && !($service instanceof ECheck)
             && in_array($transaction->transactionStatus, array('A', 'C'));
     }
 
@@ -755,7 +751,7 @@ class HeartlandTerminal_Submenu
      *
      * @return bool
      */
-    protected function transactionCanVoid(HpsReportTransactionDetails $transaction)
+    protected function transactionCanVoid(TransactionSummary  $transaction)
     {
         $service = $this->getServiceForTransaction($transaction);
         return $service !== false

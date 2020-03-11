@@ -83,11 +83,11 @@ $ignoredProperties = array(
                                 <?php _e('Gateway Response', 'heartland-management-terminal') ?>:
                                 <?php
                                 $gatewayResponse = null;
-                                if ($transaction->gatewayResponse()->message) {
+                                if ($transaction->gatewayResponseMessage) {
                                     $gatewayResponse = sprintf(
                                         '%s (%s)',
-                                        $transaction->gatewayResponse()->message,
-                                        $transaction->gatewayResponse()->code
+                                        $transaction->gatewayResponseMessage,
+                                        $transaction->gatewayResponseCode
                                     );
                                 }
                                 ?>
