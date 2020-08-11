@@ -35,7 +35,7 @@
         <?php foreach ($items as $o) : ?>
             <?php
             $offset = date('Z');
-            $localTs = strtotime($o->transactionUTCDate) + $offset;
+            $localTs = strtotime($o->responseDate) + $offset;
             $localDate = date('Y-m-d', $localTs);
             ?>
             <tr>
