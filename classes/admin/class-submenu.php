@@ -27,6 +27,7 @@ use GlobalPayments\Api\Entities\Transaction;
 use GlobalPayments\Api\PaymentMethods\GiftCard;
 use GlobalPayments\Api\PaymentMethods\ECheck;
 use GlobalPayments\Api\Entities\Exceptions;
+use GlobalPayments\Api\Entities\Enums\PaymentMethodType;
 
 class HeartlandTerminal_Submenu
 {
@@ -477,7 +478,7 @@ class HeartlandTerminal_Submenu
     {
         $config = new ServicesConfig();
         $config->secretApiKey = $this->getSetting('secret_api_key');
-        $config->serviceUrl = "https://cert.api2.heartlandportico.com";  
+	$config->serviceUrl = strpos($config->secretApiKey, 'prod') ? 'https://api2.heartlandportico.com' : 'https://cert.api2.heartlandportico.com';
         return $config;  
     }
     /**
@@ -717,7 +718,7 @@ class HeartlandTerminal_Submenu
         if ($transaction->transactionStatus === 'A'
             || $service instanceof GiftCard
         ) {
-            $builder = Transaction::fromId($transaction->transactionId)
+            $builder = Transaction::fromId($transaction->transactionId,PaymentMethodType::GIFT)
                     ->reverse($transaction->amount)
                     ->execute();
         } else {
