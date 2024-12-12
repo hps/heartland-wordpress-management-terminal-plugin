@@ -1,12 +1,12 @@
 === Heartland Management Terminal ===
-Contributors: markhagan
-Tags: heartland, payment, systems, gateway, token, tokenize, securesubmit.
-Tested up to: 5.2
+Contributors: markhagan, mvachchewar
+Tags: heartland, payment, gateway, token, securesubmit.
+Tested up to: 6.7
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
-This management terminal exposes limited functionality to manage transactions through your WordPress installation. Current functionality may not be a one-to-one match for Portico Virtual Terminal.
+This management terminal exposes limited functionality to manage transactions through your WordPress installation.
 
 == Description ==
 

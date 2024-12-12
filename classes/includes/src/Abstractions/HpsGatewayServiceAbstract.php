@@ -31,7 +31,7 @@ abstract class HpsGatewayServiceAbstract
     {
         if ($this->_isConfigInvalid()) {
             throw new HpsAuthenticationException(
-                HpsExceptionCodes::INVALID_CONFIGURATION,
+                esc_attr(HpsExceptionCodes::INVALID_CONFIGURATION),
                 "The HPS SDK has not been properly configured. "
                 ."Please make sure to initialize the config "
                 ."in a service constructor."
@@ -47,45 +47,46 @@ abstract class HpsGatewayServiceAbstract
                 $message .= ", but a(n) {$type} key is currently configured.";
             }
             throw new HpsAuthenticationException(
-                HpsExceptionCodes::INVALID_CONFIGURATION,
-                $message
+                esc_attr(HpsExceptionCodes::INVALID_CONFIGURATION),
+                esc_attr($message)
             );
         }
 
         $logger = HpsLogger::getInstance();
 
         try {
-            $request = curl_init();
-            curl_setopt($request, CURLOPT_URL, $url);
-            curl_setopt($request, CURLOPT_CONNECTTIMEOUT, 100);
-            curl_setopt($request, CURLOPT_TIMEOUT, 100);
-            curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($request, CURLOPT_SSL_VERIFYHOST, false);
+            $request = '';
+
+            wp_remote_get($request, CURLOPT_URL, $url);
+            wp_remote_get($request, CURLOPT_CONNECTTIMEOUT, 100);
+            wp_remote_get($request, CURLOPT_TIMEOUT, 100);
+            wp_remote_get($request, CURLOPT_RETURNTRANSFER, true);
+            wp_remote_get($request, CURLOPT_SSL_VERIFYPEER, false);
+            wp_remote_get($request, CURLOPT_SSL_VERIFYHOST, false);
             if ($data != null) {
                 $logger->log('Request data', $data);
-                curl_setopt($request, CURLOPT_CUSTOMREQUEST, $httpVerb);
-                curl_setopt($request, CURLOPT_POSTFIELDS, $data);
+                wp_remote_get($request, CURLOPT_CUSTOMREQUEST, $httpVerb);
+                wp_remote_get($request, CURLOPT_POSTFIELDS, $data);
             }
             $logger->log('Request headers', $headers);
-            curl_setopt($request, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($request, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+            wp_remote_get($request, CURLOPT_HTTPHEADER, $headers);
+            wp_remote_get($request, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
 
             if ($this->_config->useProxy) {
-                curl_setopt($request, CURLOPT_PROXY, $this->_config->proxyOptions['proxy_host']);
-                curl_setopt($request, CURLOPT_PROXYPORT, $this->_config->proxyOptions['proxy_port']);
+                wp_remote_get($request, CURLOPT_PROXY, $this->_config->proxyOptions['proxy_host']);
+                wp_remote_get($request, CURLOPT_PROXYPORT, $this->_config->proxyOptions['proxy_port']);
             }
 
             if (
                 $this->_config->curlOptions != null
                 && !empty($this->_config->curlOptions)
             ) {
-                curl_setopt_array($request, $this->_config->curlOptions);
+                wp_remote_get($request, $this->_config->curlOptions);
             }
 
-            $curlResponse = curl_exec($request);
-            $curlInfo = curl_getinfo($request);
-            $curlError = curl_errno($request);
+            $curlResponse = wp_remote_get($request);
+            $curlInfo = wp_remote_get($request);
+            $curlError = wp_remote_get($request);
 
             $logger->log('Response data', $curlResponse);
             $logger->log('Curl info', $curlInfo);
@@ -105,11 +106,11 @@ abstract class HpsGatewayServiceAbstract
             return $this->processResponse($curlResponse, $curlInfo, $curlError);
         } catch (Exception $e) {
             throw new HpsGatewayException(
-                $e->getCode() != null ? $e->getCode() : HpsExceptionCodes::UNKNOWN_GATEWAY_ERROR,
-                $e->getMessage() != null ? $e->getMessage() : 'Unable to process transaction',
+                $e->getCode() != null ? esc_attr($e->getCode()) : esc_attr(HpsExceptionCodes::UNKNOWN_GATEWAY_ERROR),
+                $e->getMessage() != null ? esc_attr($e->getMessage()) : 'Unable to process transaction',
                 null,
                 null,
-                $e
+                esc_attr($e)
             );
         }
     }

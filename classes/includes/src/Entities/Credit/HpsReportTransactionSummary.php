@@ -55,14 +55,14 @@ class HpsReportTransactionSummary extends HpsTransaction
             $issuerResponseCode  = (isset($charge->IssuerRspCode) ? (string)$charge->IssuerRspCode : null);
 
             if (($gwResponseCode !== null && $gwResponseCode != "0")
-                || ($isserResponseCode !== null && $issuerResponseCode != "00")
+                || (isset($isserResponseCode) && $isserResponseCode !== null && $issuerResponseCode != "00")
             ) {
                 $exceptions = new HpsChargeExceptions();
                 if ($gwResponseCode !== null && $gwResponseCode != "0") {
                     $message = (string)$charge->GatewayRspMsg;
                     $exceptions->hpsException = HpsGatewayResponseValidation::getException((string)$charge->GatewayTxnId, $gwResponseCode, $message);
                 }
-                if ($isserResponseCode !== null && $issuerResponseCode != "00") {
+                if (isset($isserResponseCode) && $isserResponseCode !== null && $issuerResponseCode != "00") {
                     $message = (string)$charge->IssuerRspText;
                     $exceptions->cardException = HpsIssuerResponseValidation::getException((string)$charge->GatewayTxnId, $issuerResponseCode, $message, 'credit');
                 }

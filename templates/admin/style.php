@@ -16,7 +16,7 @@
 	    display: block;
 	    margin: 10px 0 15px 0;
 	    font-size: 15px;
-	    background-image: url(<?php echo plugins_url('/assets/logo.png', __FILE__) ?>);
+	    background-image: url(<?php echo esc_attr(plugins_url('/assets/logo.png', __FILE__)) ?>);
 	    background-repeat: no-repeat;
 	    background-position: 20px center;
 	    background-size: auto 20px;
