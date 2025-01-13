@@ -168,7 +168,7 @@
 <script type="text/javascript">
   (function (document, Heartland) {
     var hps = new Heartland.HPS({
-      publicKey: '<?php echo $this->getSetting('public_api_key'); ?>',
+      publicKey: '<?php echo esc_attr($this->getSetting('public_api_key')); ?>',
       type:      'iframe',
       fields: {
         cardNumber: {

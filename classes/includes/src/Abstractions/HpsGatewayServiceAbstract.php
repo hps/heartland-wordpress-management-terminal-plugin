@@ -55,38 +55,37 @@ abstract class HpsGatewayServiceAbstract
         $logger = HpsLogger::getInstance();
 
         try {
-            $request = '';
-
-            wp_remote_get($request, CURLOPT_URL, $url);
-            wp_remote_get($request, CURLOPT_CONNECTTIMEOUT, 100);
-            wp_remote_get($request, CURLOPT_TIMEOUT, 100);
-            wp_remote_get($request, CURLOPT_RETURNTRANSFER, true);
-            wp_remote_get($request, CURLOPT_SSL_VERIFYPEER, false);
-            wp_remote_get($request, CURLOPT_SSL_VERIFYHOST, false);
+            $request = curl_init();
+            curl_setopt($request, CURLOPT_URL, $url);
+            curl_setopt($request, CURLOPT_CONNECTTIMEOUT, 100);
+            curl_setopt($request, CURLOPT_TIMEOUT, 100);
+            curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($request, CURLOPT_SSL_VERIFYHOST, false);
             if ($data != null) {
                 $logger->log('Request data', $data);
-                wp_remote_get($request, CURLOPT_CUSTOMREQUEST, $httpVerb);
-                wp_remote_get($request, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($request, CURLOPT_CUSTOMREQUEST, $httpVerb);
+                curl_setopt($request, CURLOPT_POSTFIELDS, $data);
             }
             $logger->log('Request headers', $headers);
-            wp_remote_get($request, CURLOPT_HTTPHEADER, $headers);
-            wp_remote_get($request, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+            curl_setopt($request, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($request, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
 
             if ($this->_config->useProxy) {
-                wp_remote_get($request, CURLOPT_PROXY, $this->_config->proxyOptions['proxy_host']);
-                wp_remote_get($request, CURLOPT_PROXYPORT, $this->_config->proxyOptions['proxy_port']);
+                curl_setopt($request, CURLOPT_PROXY, $this->_config->proxyOptions['proxy_host']);
+                curl_setopt($request, CURLOPT_PROXYPORT, $this->_config->proxyOptions['proxy_port']);
             }
 
             if (
                 $this->_config->curlOptions != null
                 && !empty($this->_config->curlOptions)
             ) {
-                wp_remote_get($request, $this->_config->curlOptions);
+                curl_setopt_array($request, $this->_config->curlOptions);
             }
 
-            $curlResponse = wp_remote_get($request);
-            $curlInfo = wp_remote_get($request);
-            $curlError = wp_remote_get($request);
+            $curlResponse = curl_exec($request);
+            $curlInfo = curl_getinfo($request);
+            $curlError = curl_errno($request);
 
             $logger->log('Response data', $curlResponse);
             $logger->log('Curl info', $curlInfo);

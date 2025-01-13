@@ -222,7 +222,10 @@ class HeartlandTerminal_Submenu
                name="<?php echo esc_attr($name) ?>"
                value="<?php echo esc_attr($value) ?>">
         <p class="description">
-            <?php esc_html_e($args['description'], 'heartland-management-terminal') ?>
+            <?php sprintf(
+                /* translators: %s: Description */
+                esc_html__( '%s.', 'heartland-management-terminal' ), $args['description']);
+            ?>
         </p>
         <?php
     }
