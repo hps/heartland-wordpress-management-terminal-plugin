@@ -8,7 +8,7 @@
  * Plugin Name:       Heartland Management Terminal
  * Plugin URI:        https://developer.heartlandpaymentsystems.com/
  * Description:       View and Manage your Heartland transactions.
- * Version:           1.3.0
+ * Version:           1.4.0
  * Author:            Heartland Payment Systems
  * Author URI:        https://developer.heartlandpaymentsystems.com/
  * License:           GPL-2.0+

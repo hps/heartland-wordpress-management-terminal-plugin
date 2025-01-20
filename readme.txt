@@ -32,6 +32,10 @@ Features of Heartland Management Terminal:
 
 == Changelog ==
 
+= 1.4.0 =
+* Fixed plugin errors - Security Vulnerabilities
+* Testes upto WordPress version 6.7
+
 = 1.3.0 =
 * Updated 'Take a Payment' page to support Canadian provinces and postal codes
 
