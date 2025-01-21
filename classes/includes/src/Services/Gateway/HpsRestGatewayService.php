@@ -40,7 +40,7 @@ class HpsRestGatewayService extends HpsGatewayServiceAbstract
             $data = $this->searchFields;
         }
 
-        $encodedData = json_encode($data);
+        $encodedData = wp_json_encode($data);
 
         $identity = array();
         if (isset($this->_config->siteId)) {
@@ -57,13 +57,13 @@ class HpsRestGatewayService extends HpsGatewayServiceAbstract
             ? $this->_config->username.':'.$this->_config->password
             : $this->_config->secretApiKey;
         $header = array(
-            'Authorization: Basic '.base64_encode($auth),
-            'Content-Type: application/json; charset=utf-8',
-            'Content-Length: '.strlen($encodedData),
+            'Authorization' => 'Basic '.base64_encode($auth),
+            'Content-Type' => 'application/json; charset=utf-8',
+            'Content-Length' => strlen($encodedData)
         );
 
         if (isset($this->_config->username)) {
-            $header[] = 'HPS-Identity: '.implode(',', $identity);
+            $header['HPS-Identity'] = implode(',', $identity);
         }
         $keyType = HpsServicesConfig::KEY_TYPE_SECRET;
         // print "\n" . $encodedData;
@@ -81,7 +81,7 @@ class HpsRestGatewayService extends HpsGatewayServiceAbstract
                 return $response;
                 break;
             case '400':
-                throw new HpsException($response->error->message);
+                throw new HpsException(esc_attr($response->error->message));
                 break;
             default:
                 throw new HpsException('Unexpected response');

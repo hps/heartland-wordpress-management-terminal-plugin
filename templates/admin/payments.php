@@ -2,7 +2,7 @@
 
 <?php do_action('admin_notices'); ?>
 
-<form id="iframes" method="post" action="<?php echo $page ?>">
+<form id="iframes" method="post" action="<?php echo esc_attr($page) ?>">
 
     <input type="hidden" name="page" value="heartland-payments">
     <input type="hidden" name="action" value="charge">
@@ -163,17 +163,12 @@
         </div>
 
     </div>
-
-
-
-
 </form>
 
-<script type="text/javascript" src="https://api2.heartlandportico.com/SecureSubmit.v1/token/2.1/securesubmit.js"></script>
 <script type="text/javascript">
   (function (document, Heartland) {
     var hps = new Heartland.HPS({
-      publicKey: '<?php echo $this->getSetting('public_api_key'); ?>',
+      publicKey: '<?php echo esc_attr($this->getSetting('public_api_key')); ?>',
       type:      'iframe',
       fields: {
         cardNumber: {
@@ -278,7 +273,7 @@
         {
           accumulateData: true,
           action: 'tokenize',
-          message: '<?php echo $this->getSetting('public_api_key'); ?>'
+          message: '<?php echo esc_attr($this->getSetting('public_api_key')); ?>'
         },
         'cardNumber'
       );

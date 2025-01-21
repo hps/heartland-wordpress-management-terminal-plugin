@@ -39,6 +39,11 @@ NEED ADDITIONAL HELP? Contact Us http://developer.heartlandpaymentsystems.com/su
 
 ## Changelog
 
+### 1.4.0
+
+* Fixed plugin errors - Security Vulnerabilities
+* Testes upto WordPress version 6.7
+
 ### 1.1.1
 
 * Fixed hard-coded public API key on payments page

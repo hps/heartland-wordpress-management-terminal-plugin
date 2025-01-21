@@ -31,7 +31,7 @@ class HpsTokenService extends HpsRestGatewayService
         $data['card[exp_year]'] = $cardData->expYear;
 
         $url = $this->_url ."?". http_build_query($data);
-        $header = array('Content-type: application/json');
+        $header = array('Content-Type' => 'text/xml;charset="utf-8"');
 
         return $this->submitRequest($url, $header, null, 'GET', HpsServicesConfig::KEY_TYPE_PUBLIC);
     }
@@ -41,7 +41,7 @@ class HpsTokenService extends HpsRestGatewayService
         $response = json_decode($curlResponse);
 
         if (isset($response->error) && is_object($response->error)) {
-            throw new HpsException($response->error->message, $response->error->code);
+            throw new HpsException(esc_attr($response->error->message), esc_attr($response->error->code));
         }
         
         return $response;

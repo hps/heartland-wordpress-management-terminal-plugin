@@ -23,10 +23,11 @@ class HpsCentinelGatewayService
         $url = $this->_config->serviceUri();
         $xmlData = $xml->saveXML();
         $data = 'cmpi_msg=' . urlencode($xmlData);
+
         $header = array(
-            'Content-type: application/x-www-form-urlencoded;charset="utf-8"',
-            'Accept: text/xml',
-            'Content-length: '.strlen($data),
+            'Content-type' => 'application/x-www-form-urlencoded;charset="utf-8"',
+            'Accept' => 'text/xml',
+            'Content-length' => strlen($data),
         );
         // error_log($xmlData);
 
@@ -42,7 +43,7 @@ class HpsCentinelGatewayService
                 break;
             case '500':
                 $faultString = '';
-                throw new HpsException($faultString);
+                throw new HpsException(esc_attr($faultString));
                 break;
             default:
                 throw new HpsException('Unexpected response');

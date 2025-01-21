@@ -58,6 +58,9 @@ class HeartlandTerminal_Submenu
         // hooks
         add_action('admin_menu', array($this, 'addAdminMenuPage'));
         add_action('admin_init', array($this, 'settingsInit'));
+
+        wp_register_script( 'secure-submit', 'https://api2.heartlandportico.com/SecureSubmit.v1/token/2.1/securesubmit.js', '', true );
+        wp_enqueue_script('secure-submit');
     }
 
     /**
@@ -85,10 +88,10 @@ class HeartlandTerminal_Submenu
             $this->code,
             $this->code . '_section_keys',
             array(
-               'label_for' => $this->code . '_public_api_key',
-               'class' => $this->code . '_row',
-               'description' => '',
-               'default' => '',
+                'label_for' => $this->code . '_public_api_key',
+                'class' => $this->code . '_row',
+                'description' => '',
+                'default' => '',
             )
         );
         add_settings_field(
@@ -99,10 +102,10 @@ class HeartlandTerminal_Submenu
             $this->code,
             $this->code . '_section_keys',
             array(
-               'label_for' => $this->code . '_secret_api_key',
-               'class' => $this->code . '_row',
-               'description' => '',
-               'default' => '',
+                'label_for' => $this->code . '_secret_api_key',
+                'class' => $this->code . '_row',
+                'description' => '',
+                'default' => '',
             )
         );
 
@@ -216,10 +219,13 @@ class HeartlandTerminal_Submenu
         ?>
         <input id="<?php echo esc_attr($args['label_for']) ?>"
                type="text" class="regular-text"
-               name="<?php echo $name ?>"
-               value="<?php echo $value ?>">
+               name="<?php echo esc_attr($name) ?>"
+               value="<?php echo esc_attr($value) ?>">
         <p class="description">
-            <?php esc_html_e($args['description'], 'heartland-management-terminal') ?>
+            <?php sprintf(
+                /* translators: %s: Description */
+                esc_html__( '%s.', 'heartland-management-terminal' ), $args['description']);
+            ?>
         </p>
         <?php
     }
@@ -340,8 +346,8 @@ class HeartlandTerminal_Submenu
      */
     public function adminHeartlandPayments()
     {
-        $action = isset($_POST['action']) ? $_POST['action'] : '';
-        $command = isset($_POST['command']) ? $_POST['command'] : '';
+        $action = isset($_POST['action']) ? wp_unslash($_POST['action']) : '';
+        $command = isset($_POST['command']) ? wp_unslash($_POST['command']) : '';
 
         if (!empty($action) && !empty($command)) {
             try {
@@ -355,6 +361,7 @@ class HeartlandTerminal_Submenu
                 delete_transient(get_transient($this->code . '_data'));
             } catch (HpsException $e) {
                 $this->addNotice(
+                    /* translators: %s: Error Message */
                     sprintf(__('The payment has failed. %s', 'heartland-management-terminal'), $e->getMessage()),
                     'notice-error'
                 );
@@ -386,6 +393,7 @@ class HeartlandTerminal_Submenu
                 delete_transient(get_transient($this->code . '_data'));
             } catch (HpsException $e) {
                 $this->addNotice(
+                    /* translators: %s: Error Message */
                     sprintf(__('Transaction update failed. %s', 'heartland-management-terminal'), $e->getMessage()),
                     'notice-error'
                 );
@@ -485,7 +493,7 @@ class HeartlandTerminal_Submenu
         }
 
         $defaultTZ = date_default_timezone_get();
-        date_default_timezone_set('UTC');
+        wp_timezone_string('UTC');
         $service = new HpsCreditService($this->getHeartlandConfiguration());
         $dateFormat = 'Y-m-d\TH:i:s.00\Z';
         $dateMinus10 = new DateTime();
@@ -506,11 +514,11 @@ class HeartlandTerminal_Submenu
              *
              * @param HpsReportTransactionSummary[] $items
              */
-            json_encode(apply_filters($this->code . '_report_items', $filteredItems)),
+            wp_json_encode(apply_filters($this->code . '_report_items', $filteredItems)),
             $this->getSetting('report_transient_timeout', HOUR_IN_SECONDS / 2)
         );
 
-        date_default_timezone_set($defaultTZ);
+        wp_timezone_string($defaultTZ);
         return $filteredItems;
     }
 
@@ -672,7 +680,8 @@ class HeartlandTerminal_Submenu
 
         if (false === $service) {
             throw new Exception(
-                __('Transaction cannot be managed at this time.', 'heartland-management-terminal')
+                /* translators: %s: Error Message */
+                esc_attr('Transaction cannot be managed at this time.', 'heartland-management-terminal')
             );
         }
 
@@ -688,7 +697,8 @@ class HeartlandTerminal_Submenu
             || $service instanceof HpsFluentCheckService
         ) {
             throw new Exception(
-                __('Transaction cannot be managed at this time.', 'heartland-management-terminal')
+                /* translators: %s: Error Message */
+                esc_attr('Transaction cannot be managed at this time.', 'heartland-management-terminal')
             );
         }
 
